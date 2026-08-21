@@ -1,3 +1,27 @@
+export interface ExamHistory {
+  id: string
+  level: number
+  score: number
+  totalQuestions: number
+  passed: boolean
+  attemptedAt: string
+}
+
+export interface User {
+  id: string
+  username: string
+  name: string
+  surname: string
+  email: string
+  province: string
+  role: 'admin' | 'user'
+  level: number        // เพิ่มรองรับ .level
+  currentLevel?: number // สำรองกรณีใช้ currentLevel
+  isActive: boolean
+  profileImage: string
+  examHistory: ExamHistory[]
+}
+
 export interface Benefit {
   id: string
   description: string
@@ -6,14 +30,14 @@ export interface Benefit {
 export interface Service {
   id: string
   name: string
-  badge: string
   description: string
 }
 
-export interface Level {
+export interface LevelDetail {
   level: number
   title: string
-  passCriteriaPercentage: number // เช่น 70 (%)
+  description: string
+  passScore: number
   benefits: Benefit[]
   services: Service[]
 }
@@ -21,30 +45,7 @@ export interface Level {
 export interface Question {
   id: string
   level: number
-  question: string
+  questionText: string
   options: string[]
-  correctAnswerIndex: number
-}
-
-export interface ExamHistory {
-  id: string
-  userId: string
-  level: number
-  score: number
-  totalQuestions: number
-  percentage: number
-  passed: boolean
-  attemptedAt: string // ISO Date String
-}
-
-export interface User {
-  id: string
-  username: string
-  name: string
-  surname: string
-  profileImage: string
-  currentLevel: number
-  isActive: boolean
-  province: string
-  examHistory: ExamHistory[]
+  correctAnswer: number
 }

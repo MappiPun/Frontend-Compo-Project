@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import UserProfileHeader from '@/components/UserProfileHeader.vue'
 
 const route = useRoute()
-const router = useRouter()
 const userStore = useUserStore()
 
 const user = computed(() => userStore.getUserById(route.params.id as string))

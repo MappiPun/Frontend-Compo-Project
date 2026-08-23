@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import type { User, LevelDetail, Question, ExamHistory } from '@/types'
 import { mockUsers, mockLevels, mockQuestions } from '@/mock/data'
 

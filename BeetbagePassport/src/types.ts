@@ -1,8 +1,10 @@
 export interface ExamHistory {
   id: string
+  userId?: string
   level: number
   score: number
   totalQuestions: number
+  percentage?: number
   passed: boolean
   attemptedAt: string
 }
@@ -15,7 +17,7 @@ export interface User {
   email: string
   province: string
   role: 'admin' | 'user'
-  level: number        // เพิ่มรองรับ .level
+  level: number         // เพิ่มรองรับ .level
   currentLevel?: number // สำรองกรณีใช้ currentLevel
   isActive: boolean
   profileImage: string
@@ -30,17 +32,20 @@ export interface Benefit {
 export interface Service {
   id: string
   name: string
+  badge?: string
   description: string
 }
 
 export interface LevelDetail {
   level: number
   title: string
-  description: string
+  description?: string
   passScore: number
   benefits: Benefit[]
   services: Service[]
 }
+
+export type Level = LevelDetail
 
 export interface Question {
   id: string

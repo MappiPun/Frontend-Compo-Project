@@ -33,7 +33,7 @@ export interface Service {
   description: string
 }
 
-export interface Level {
+export interface LevelDetail {
   level: number
   title: string
   description: string

@@ -3,63 +3,63 @@ import { ref, computed } from 'vue'
 import UserProfileHeader from '@/components/UserProfileHeader.vue'
 import UserNavigation from '@/components/UserNavigation.vue'
 import { useAuthStore } from '@/stores/auth'
+import { useUserStore } from '@/stores/user'
 
 const authStore = useAuthStore()
+const userStore = useUserStore()
 
-// ข้อมูลตัวอย่างคอร์ส eLearning และชุดข้อสอบ
-const courses = ref([
-  {
-    id: 'c1',
-    level: 1,
-    title: 'CAMT Passport Core Values & Basics',
-    description: 'เรียนรู้ค่านิยมหลักและการใช้งานระบบ CAMT Passport เบื้องต้น',
-    questionsCount: 2,
-    passingScore: 50,
-    questions: [
-      {
-        id: 1,
-        text: '1. What is the primary core value of CAMT Passport?',
-        options: ['Continuous Learning', 'Gaming Only', 'Social Networking', 'Food Service'],
-        correctAnswer: 0
-      },
-      {
-        id: 2,
-        text: '2. How many main service levels exist in CAMT Passport?',
-        options: ['2 Levels', '3 Levels', '4 Levels', '5 Levels'],
-        correctAnswer: 2
-      }
-    ]
-  },
-  {
-    id: 'c2',
-    level: 2,
-    title: 'Intermediate Web Security',
-    description: 'ความรู้พื้นฐานเกี่ยวกับ Authentication และ Web Security สำหรับ Level 2',
-    questionsCount: 2,
-    passingScore: 50,
-    questions: [
-      {
-        id: 1,
-        text: '1. Which algorithm is commonly used for secure password hashing?',
-        options: ['MD5', 'Bcrypt', 'Base64', 'Plain Text'],
-        correctAnswer: 1
-      },
-      {
-        id: 2,
-        text: '2. What is the main purpose of HTTPS?',
-        options: ['Encrypting Communication', 'Increasing Web Speed', 'Storing Passwords', 'Designing Layout'],
-        correctAnswer: 0
-      }
-    ]
-  }
-])
+type ExamCourse = {
+  id: string
+  level: number
+  title: string
+  description: string
+  questionsCount: number
+  passingScore: number
+  questions: {
+    id: string
+    text: string
+    options: string[]
+    correctAnswer: number
+  }[]
+}
 
-const selectedCourse = ref<typeof courses.value[0] | null>(null)
-const userAnswers = ref<Record<number, number>>({})
+const currentLevel = computed(() => {
+  const username = authStore.currentUser?.username
+  const user = userStore.users.find((u) => u.username === username)
+  return Math.min(Math.max(user?.level ?? user?.currentLevel ?? 1, 1), 4)
+})
+
+const courses = computed<ExamCourse[]>(() => {
+  return userStore.levels
+    .filter((level) => level.level >= 1 && level.level <= 4)
+    .map((level) => {
+      const questions = userStore.questions
+        .filter((question) => question.level === level.level)
+        .map((question) => ({
+          id: question.id,
+          text: question.questionText,
+          options: question.options,
+          correctAnswer: question.correctAnswer
+        }))
+
+      return {
+        id: `level-${level.level}`,
+        level: level.level,
+        title: `${level.title} Exam`,
+        description: `Complete all ${questions.length} questions to reach the next passport level.`,
+        questionsCount: questions.length,
+        passingScore: level.passScore,
+        questions
+      }
+    })
+})
+
+const selectedCourse = ref<ExamCourse | null>(null)
+const userAnswers = ref<Record<string, number>>({})
 const isSubmitted = ref(false)
 const score = ref(0)
 
-function selectCourse(course: typeof courses.value[0]) {
+function selectCourse(course: ExamCourse) {
   selectedCourse.value = course
   userAnswers.value = {}
   isSubmitted.value = false
@@ -70,37 +70,33 @@ function backToCourseList() {
   selectedCourse.value = null
   userAnswers.value = {}
   isSubmitted.value = false
+  score.value = 0
 }
 
 async function submitExam() {
   if (!selectedCourse.value) return
 
-  let calculatedScore = 0
   let correctCount = 0
 
-  selectedCourse.value.questions.forEach((q) => {
-    if (userAnswers.value[q.id] === q.correctAnswer) {
-      calculatedScore += 50
+  selectedCourse.value.questions.forEach((question) => {
+    if (userAnswers.value[question.id] === question.correctAnswer) {
       correctCount += 1
     }
   })
 
-  score.value = calculatedScore
+  score.value = correctCount
   isSubmitted.value = true
 
-  const passed = calculatedScore >= selectedCourse.value.passingScore
+  const passed = correctCount >= selectedCourse.value.passingScore
 
-  // ส่งข้อมูลที่สะกดชื่อ Property ตรงกับ UI Component
-  await authStore.addExamHistory({
-    id: Date.now().toString(),
-    level: selectedCourse.value.level || 1,
-    title: selectedCourse.value.title,
-    examTitle: selectedCourse.value.title,
-    score: correctCount, // ส่งเป็นจำนวนข้อที่ตอบถูก (เช่น 1 หรือ 2) เพื่อให้ UI แสดง 1/2
-    totalQuestions: selectedCourse.value.questionsCount,
-    passed: passed,
-    attemptedAt: new Date().toISOString() // ส่ง attemptedAt ISO String สำหรับ new Date()
-  })
+  if (authStore.currentUser?.username) {
+    await userStore.recordExamResult(
+      authStore.currentUser.username,
+      correctCount,
+      selectedCourse.value.questions.length,
+      passed
+    )
+  }
 }
 
 const isAllAnswered = computed(() => {
@@ -127,21 +123,39 @@ const isAllAnswered = computed(() => {
           <div 
             v-for="course in courses" 
             :key="course.id"
-            class="bg-white rounded-2xl p-6 shadow-xs border border-slate-200 hover:border-purple-500 transition flex flex-col justify-between"
+            class="rounded-2xl p-6 shadow-xs border transition flex flex-col justify-between"
+            :class="course.level <= currentLevel
+              ? 'bg-white border-slate-200 hover:border-purple-500'
+              : 'bg-slate-100 border-slate-200 opacity-60'"
           >
             <div>
-              <span class="text-xs font-bold text-purple-600 bg-purple-50 px-2.5 py-1 rounded-md inline-block mb-3">
-                {{ course.questionsCount }} Questions
-              </span>
-              <h2 class="text-lg font-bold text-slate-900 mb-2">{{ course.title }}</h2>
-              <p class="text-sm text-slate-600 leading-relaxed mb-4">{{ course.description }}</p>
+              <div class="flex items-center justify-between gap-3 mb-3">
+                <span
+                  class="text-xs font-bold px-2.5 py-1 rounded-md inline-block"
+                  :class="course.level <= currentLevel ? 'text-purple-600 bg-purple-50' : 'text-slate-500 bg-slate-200'"
+                >
+                  Level {{ course.level }} · {{ course.questionsCount }} Questions
+                </span>
+                <span
+                  v-if="course.level > currentLevel"
+                  class="text-xs font-bold text-slate-500"
+                >
+                  Unavailable
+                </span>
+              </div>
+              <h2 class="text-lg font-bold mb-2" :class="course.level <= currentLevel ? 'text-slate-900' : 'text-slate-500'">{{ course.title }}</h2>
+              <p class="text-sm leading-relaxed mb-4" :class="course.level <= currentLevel ? 'text-slate-600' : 'text-slate-400'">{{ course.description }}</p>
             </div>
 
             <button
               @click="selectCourse(course)"
-              class="w-full py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow-xs transition text-sm"
+              :disabled="course.level > currentLevel"
+              class="w-full py-2.5 font-bold rounded-xl shadow-xs transition text-sm"
+              :class="course.level <= currentLevel
+                ? 'bg-purple-600 hover:bg-purple-700 text-white'
+                : 'bg-slate-300 text-slate-500 cursor-not-allowed'"
             >
-              Start Exam →
+              {{ course.level <= currentLevel ? 'Start Exam →' : 'Locked' }}
             </button>
           </div>
         </div>
@@ -166,7 +180,7 @@ const isAllAnswered = computed(() => {
           <h3 class="text-2xl font-extrabold" :class="score >= selectedCourse.passingScore ? 'text-green-600' : 'text-red-600'">
             {{ score >= selectedCourse.passingScore ? '🎉 Passed!' : '❌ Not Passed' }}
           </h3>
-          <p class="text-slate-700 mt-2 font-medium">Your Score: <span class="font-bold text-lg">{{ score }} / 100</span></p>
+          <p class="text-slate-700 mt-2 font-medium">Your Score: <span class="font-bold text-lg">{{ score }} / {{ selectedCourse.questions.length }}</span></p>
           <button 
             @click="backToCourseList" 
             class="mt-4 px-5 py-2 bg-slate-800 text-white font-bold text-xs rounded-xl hover:bg-slate-900 transition"

@@ -104,8 +104,8 @@
     },
     {
       "username": "map",
-      "name": "",
-      "surname": "",
+      "name": "Papon",
+      "surname": "Punyanitya",
       "email": "map@example.com",
       "province": "",
       "role": "user",
@@ -113,7 +113,8 @@
       "isActive": true,
       "profileImage": "https://api.dicebear.com/7.x/bottts/svg?seed=map",
       "examHistory": [],
-      "id": "iQ0CdBdLca0"
+      "id": "iQ0CdBdLca0",
+      "phone": "0888852191"
     }
   ],
   "levels": [

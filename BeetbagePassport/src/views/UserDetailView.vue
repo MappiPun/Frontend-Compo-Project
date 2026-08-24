@@ -1,30 +1,53 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
-import { useUserStore } from '@/stores/user'
-import UserProfileHeader from '@/components/UserProfileHeader.vue'
+import { ref, onMounted } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+import { apiClient } from '@/services/api'
+import type { User } from '@/types'
 
-const route = useRoute()
-const userStore = useUserStore()
+const props = defineProps<{
+  id: string
+}>()
 
-const user = computed(() => userStore.getUserById(route.params.id as string))
+const authStore = useAuthStore()
+const user = ref<User | null>(null)
+
+onMounted(async () => {
+  try {
+    const res = await apiClient.get<User>(`/users/${props.id}`)
+    user.value = res.data
+  } catch (error) {
+    console.error('Fetch user detail error:', error)
+  }
+})
 </script>
 
 <template>
-  <div class="min-h-screen bg-slate-50">
-    <header class="bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center">
-      <h1 class="text-xl font-bold text-slate-800">User Details</h1>
-      <UserProfileHeader />
+  <div class="min-h-screen bg-slate-50 p-6">
+    <header class="max-w-6xl mx-auto flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-bold text-slate-900">User Details</h1>
+
+      <div class="flex items-center gap-4 bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-200">
+        <img
+          :src="authStore.currentUser?.profileImage || 'https://api.dicebear.com/7.x/bottts/svg?seed=user'"
+          alt="Avatar"
+          class="w-10 h-10 rounded-full bg-slate-100"
+        />
+        <div class="text-xs">
+          <span class="font-semibold text-indigo-600">Level {{ authStore.currentUser?.level || 1 }}</span>
+          <span class="text-slate-400"> • </span>
+          <span class="uppercase text-slate-500 font-bold">{{ authStore.currentUser?.role }}</span>
+        </div>
+        <button
+          @click="authStore.logout(); $router.push('/login')"
+          class="text-xs text-red-500 font-medium hover:underline border border-red-200 bg-red-50 px-2.5 py-1 rounded-md cursor-pointer"
+        >
+          Logout
+        </button>
+      </div>
     </header>
 
-    <main v-if="user" class="max-w-3xl mx-auto p-6 space-y-6">
-      <div class="flex space-x-4 border-b border-slate-200 pb-2">
-        <router-link :to="`/users/${user.id}`" class="text-xs font-semibold text-slate-600 hover:text-indigo-600">Info</router-link>
-        <router-link :to="`/users/${user.id}/history`" class="text-xs font-semibold text-slate-600 hover:text-indigo-600">Exam History</router-link>
-        <router-link :to="`/users/${user.id}/edit`" class="text-xs font-semibold text-slate-600 hover:text-indigo-600">Edit</router-link>
-      </div>
-
-      <router-view :user="user" :history="user.examHistory" />
+    <main class="max-w-6xl mx-auto">
+      <RouterView />
     </main>
   </div>
 </template>

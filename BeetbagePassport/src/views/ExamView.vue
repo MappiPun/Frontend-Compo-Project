@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import UserProfileHeader from '@/components/UserProfileHeader.vue'
+import UserNavigation from '@/components/UserNavigation.vue'
 
 // ข้อมูลตัวอย่างคอร์ส eLearning และชุดข้อสอบ
 const courses = ref([
@@ -86,8 +88,11 @@ const isAllAnswered = computed(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-slate-100 py-8 px-4 font-sans text-slate-800">
-    <div class="max-w-4xl mx-auto space-y-6">
+  <div class="min-h-screen bg-slate-100 p-6 font-sans text-slate-800">
+    <UserProfileHeader />
+    <UserNavigation />
+
+    <div class="max-w-4xl mx-auto space-y-6 mt-6">
       
       <!-- หน้าต่างเลือกวิชา -->
       <div v-if="!selectedCourse" class="space-y-6">

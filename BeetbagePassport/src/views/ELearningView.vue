@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import UserProfileHeader from '@/components/UserProfileHeader.vue'
 import UserNavigation from '@/components/UserNavigation.vue'
 import { useAuthStore } from '@/stores/auth'
@@ -10,6 +10,10 @@ const authStore = useAuthStore()
 const userStore = useUserStore()
 const elearningStore = useELearningStore()
 
+onMounted(() => {
+  elearningStore.fetchContents()
+})
+
 const currentLevel = computed(() => {
   const username = authStore.currentUser?.username
   const user = userStore.users.find((u) => u.username === username) || authStore.currentUser
@@ -18,7 +22,7 @@ const currentLevel = computed(() => {
 
 // กรองบทเรียนให้แสดงวิดีโอที่มี Level ไม่เกิน Level ปัจจุบันของผู้ใช้
 const availableContents = computed(() => {
-  return elearningStore.contents.filter((item) => item.level <= currentLevel.value)
+  return elearningStore.contents.filter((item) => Number(item.level) <= currentLevel.value)
 })
 </script>
 

@@ -17,8 +17,8 @@ export interface User {
   email: string
   province: string
   role: 'admin' | 'user'
-  level: number         // เพิ่มรองรับ .level
-  currentLevel?: number // สำรองกรณีใช้ currentLevel
+  level: number         
+  currentLevel?: number 
   isActive: boolean
   profileImage: string
   examHistory: ExamHistory[]

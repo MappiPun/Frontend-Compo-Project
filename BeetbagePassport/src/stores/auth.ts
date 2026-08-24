@@ -51,7 +51,7 @@ export const useAuthStore = defineStore('auth', () => {
       username: trimmed,
       name: '',
       surname: '',
-      email: `${trimmed}@example.com`,
+      email: '',
       province: '',
       role: 'user',
       level: 1,

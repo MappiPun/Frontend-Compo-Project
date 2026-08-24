@@ -26,8 +26,8 @@ onMounted(() => {
 })
 
 async function handleSave() {
-  if (!name.value.trim() || !surname.value.trim()) {
-    errorMessage.value = 'Please fill in both First Name and Last Name.'
+  if (!name.value.trim() || !surname.value.trim() || !province.value.trim()) {
+    errorMessage.value = 'Please fill in First Name, Last Name, and Province.'
     return
   }
 
@@ -94,7 +94,7 @@ async function handleSave() {
       <!-- Email & Phone Number -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Email Address</label>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Email Address <span class="font-normal text-slate-400">(optional)</span></label>
           <input
             v-model="email"
             type="email"
@@ -103,7 +103,7 @@ async function handleSave() {
           />
         </div>
         <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Phone Number</label>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Phone Number <span class="font-normal text-slate-400">(optional)</span></label>
           <input
             v-model="phone"
             type="tel"
@@ -115,7 +115,7 @@ async function handleSave() {
 
       <!-- Province -->
       <div>
-        <label class="block text-xs font-semibold text-slate-600 mb-1">Province</label>
+        <label class="block text-xs font-semibold text-slate-600 mb-1">Province *</label>
         <input
           v-model="province"
           type="text"

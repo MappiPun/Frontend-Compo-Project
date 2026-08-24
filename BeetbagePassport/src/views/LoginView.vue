@@ -28,7 +28,7 @@ async function handleLogin() {
     } else if (authStore.isAdmin) {
       router.push('/admin')
     } else {
-      router.push(`/users/${authStore.currentUser.id}`)
+      router.push('/user')
     }
   } else {
     errorMessage.value = "Error: this account doesn't exist or is inactive"
@@ -40,6 +40,21 @@ async function handleSignUp() {
 
   if (!username.value.trim()) {
     usernameError.value = 'Please enter a username'
+    return
+  }
+
+  if (/^_|_$/.test(username.value)) {
+    usernameError.value = 'Usernames cannot start or end with _.'
+    return
+  }
+
+  if ((username.value.match(/_/g) || []).length > 1) {
+    usernameError.value = 'Usernames can have at most one _.'
+    return
+  }
+
+  if (!/^[a-zA-Z0-9_]+$/.test(username.value)) {
+    usernameError.value = 'Username can only contain letters, numbers, and _.'
     return
   }
 
@@ -55,10 +70,10 @@ async function handleSignUp() {
       return
     }
 
-    await authStore.register(username.value)
-    alert('Sign up successful! Please sign in to complete your profile.')
-    isSignUp.value = false
+    const newUser = await authStore.register(username.value)
+    authStore.setUser(newUser)
     password.value = ''
+    router.push(`/users/${newUser.id}/edit`)
   } catch {
     usernameError.value = 'Sign up failed. Please try again.'
   }

@@ -2,26 +2,48 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import AdminProfileHeader from '@/components/AdminProfileHeader.vue'
+import axios from 'axios'
 
 const route = useRoute()
 const router = useRouter()
 const levelId = computed(() => Number(route.params.id))
 
-// Mockup Data หรือดึงผ่าน Store/API ตามระบบเดิม
-const levelTitle = ref('')
-const passScore = ref(2)
+const passScore = ref<number>(2)
+const isLoading = ref<boolean>(false)
+
+const fetchLevelData = async () => {
+  isLoading.value = true
+  try {
+    const res = await axios.get(`http://localhost:3000/levels/${levelId.value}`)
+    if (res.data && res.data.passScore !== undefined) {
+      passScore.value = res.data.passScore
+    }
+  } catch (err) {
+    console.error('Failed to fetch level data:', err)
+  } finally {
+    isLoading.value = false
+  }
+}
 
 onMounted(() => {
-  levelTitle.value = `Level ${levelId.value} Configuration`
+  fetchLevelData()
 })
 
 function goBack() {
   router.push('/admin')
 }
 
-function saveChanges() {
-  alert(`Saved changes for Level ${levelId.value}`)
-  goBack()
+async function saveChanges() {
+  try {
+    await axios.patch(`http://localhost:3000/levels/${levelId.value}`, {
+      passScore: Number(passScore.value)
+    })
+    alert(`Saved changes for Level ${levelId.value}`)
+    goBack()
+  } catch (err) {
+    console.error('Failed to update level:', err)
+    alert('Failed to save changes.')
+  }
 }
 </script>
 
@@ -43,11 +65,15 @@ function saveChanges() {
         </button>
       </div>
 
-      <div class="space-y-4">
+      <div v-if="isLoading" class="text-xs text-slate-400 py-4">
+        Loading...
+      </div>
+
+      <div v-else class="space-y-4">
         <div>
           <label class="block text-xs font-semibold text-slate-500 mb-1">Passing Criteria Score</label>
           <input 
-            v-model="passScore" 
+            v-model.number="passScore" 
             type="number" 
             class="w-full md:w-1/3 border border-slate-200 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-purple-500" 
           />

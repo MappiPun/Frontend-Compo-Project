@@ -45,23 +45,36 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function register(username: string) {
-    const trimmed = username.trim()
+  // ปรับรับ userData ครบชุด เพื่อส่งไป POST ที่ backend (db.json)
+  async function register(userData: {
+    username: string
+    name: string
+    surname: string
+    email: string
+    phonenumber?: string
+    province?: string
+    password?: string
+  }) {
+    const trimmedUser = userData.username.trim()
     const newUser: Partial<User> = {
-      username: trimmed,
-      name: '',
-      surname: '',
-      email: '',
-      province: '',
+      username: trimmedUser,
+      name: userData.name,
+      surname: userData.surname,
+      email: userData.email,
+      phonenumber: userData.phonenumber || '',
+      province: userData.province || 'Bangkok',
       role: 'user',
       level: 1,
       isActive: true,
-      profileImage: `https://api.dicebear.com/7.x/bottts/svg?seed=${trimmed}`,
+      profileImage: `https://api.dicebear.com/7.x/bottts/svg?seed=${trimmedUser}`,
       examHistory: []
     }
 
     try {
       const response = await apiClient.post<User>('/users', newUser)
+      if (response.data) {
+        setUser(response.data) // ล็อกอินผู้ใช้ทันทีหลังสมัครเสร็จ
+      }
       return response.data
     } catch (error) {
       console.error('Register error:', error)

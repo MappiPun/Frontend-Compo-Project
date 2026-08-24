@@ -75,7 +75,6 @@ function quickLogin(user: string) {
           ระบบ CAMT Passport ให้คุณเข้าถึงการเรียนรู้ผ่าน eLearning ทำแบบทดสอบเพื่ออัปเกรดระดับบริการตั้งแต่ Level 1 ถึง Level 4 พร้อมรับตราสัญลักษณ์และสิทธิประโยชน์มากมาย
         </p>
 
-        <!-- Service Levels Preview -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4">
           <div class="p-3 bg-white rounded-xl border border-slate-200 text-center shadow-xs">
             <span class="block text-xs font-bold text-slate-400">LEVEL 1</span>
@@ -96,13 +95,11 @@ function quickLogin(user: string) {
         </div>
       </div>
 
-      <!-- Right Column: Login Card -->
       <div id="login-card" class="lg:col-span-5 flex justify-center">
         <div class="w-full max-w-md bg-white rounded-xl shadow-lg border border-slate-300 p-8">
           <h2 class="text-3xl font-extrabold text-slate-900 mb-6">Welcome</h2>
 
           <form @submit.prevent="handleLogin" class="space-y-4">
-            <!-- Username Input -->
             <div>
               <label class="block text-xs text-slate-500 mb-1">
                 Enter your username (Hint: admin, user1, user2)
@@ -138,12 +135,10 @@ function quickLogin(user: string) {
               </div>
             </div>
 
-            <!-- Error Message -->
             <div v-if="errorMsg" class="text-xs text-red-600 font-medium pt-1">
               {{ errorMsg }}
             </div>
 
-            <!-- Submit Button -->
             <button
               type="submit"
               :disabled="isLoading"
@@ -153,7 +148,6 @@ function quickLogin(user: string) {
             </button>
           </form>
 
-          <!-- Quick Test Helpers -->
           <div class="mt-6 pt-4 border-t border-slate-100">
             <p class="text-[11px] text-slate-400 mb-2 font-medium">Quick Login:</p>
             <div class="flex gap-2">
@@ -178,15 +172,16 @@ function quickLogin(user: string) {
             </div>
           </div>
 
-          <!-- Footer Link -->
           <div class="mt-4 text-xs text-slate-500">
-            Don't have an account? <a href="#" class="text-purple-600 hover:underline">Sign up!</a>
+            Don't have an account? 
+            <router-link to="/register" class="text-purple-600 font-semibold hover:underline">
+              Sign up!
+            </router-link>
           </div>
         </div>
       </div>
     </main>
 
-    <!-- Footer -->
     <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-400">
       © 2026 CAMT Passport - SE331 Term Project
     </footer>

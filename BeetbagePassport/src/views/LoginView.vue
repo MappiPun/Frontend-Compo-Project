@@ -59,7 +59,6 @@ async function handleSignUp() {
   }
 
   try {
-    // เช็คว่า Username ซ้ำใน db.json หรือไม่
     const existingUsers = await authStore.fetchUsers()
     const isTaken = existingUsers.some(
       (u) => u.username.toLowerCase() === username.value.trim().toLowerCase()
@@ -70,10 +69,19 @@ async function handleSignUp() {
       return
     }
 
-    const newUser = await authStore.register(username.value)
-    authStore.setUser(newUser)
-    password.value = ''
-    router.push('/users/profile/edit')
+    const newUser = await authStore.register({
+      username: username.value,
+      name: '',
+      surname: '',
+      email: '',
+      phonenumber: '',
+      province: 'Bangkok'
+    })
+
+    if (newUser) {
+      password.value = ''
+      router.push('/users/profile/edit')
+    }
   } catch {
     usernameError.value = 'Sign up failed. Please try again.'
   }

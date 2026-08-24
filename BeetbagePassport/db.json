@@ -122,6 +122,20 @@
       "examHistory": [],
       "phone": "0888852191",
       "id": "hc08Yb2qUPM"
+    },
+    {
+      "username": "Kira",
+      "name": "Kira",
+      "surname": "Yoshikage",
+      "email": "kira@sample.com",
+      "phonenumber": "1111111111",
+      "province": "Bangkok",
+      "role": "user",
+      "level": 1,
+      "isActive": true,
+      "profileImage": "https://api.dicebear.com/7.x/bottts/svg?seed=Kira",
+      "examHistory": [],
+      "id": "b2gDJbAkUhM"
     }
   ],
   "levels": [

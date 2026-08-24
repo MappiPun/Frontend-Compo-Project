@@ -28,6 +28,11 @@ const router = createRouter({
       redirect: '/'
     },
     {
+      path: '/register',
+      name: 'register',
+      component: () => import('@/views/RegisterView.vue')
+    },
+    {
       path: '/admin',
       name: 'admin',
       component: AdminView,
@@ -95,6 +100,10 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
   const user = authStore.currentUser
+
+  if (to.name === 'register') {
+    return next()
+  }
 
   if (to.meta.requiresAuth && !user) {
     return next({ name: 'landing' })

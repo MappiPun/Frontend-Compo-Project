@@ -87,7 +87,6 @@ export const mockLevels: Level[] = [
 ]
 
 export const mockQuestions: Question[] = [
-  // Level 1 Upgrade Exam
   {
     id: 'q1',
     level: 1,
@@ -102,8 +101,6 @@ export const mockQuestions: Question[] = [
     options: ['2 Levels', '3 Levels', '4 Levels', '5 Levels'],
     correctAnswer: 2
   },
-
-  // Level 2 Upgrade Exam
   {
     id: 'q3',
     level: 2,
@@ -118,8 +115,6 @@ export const mockQuestions: Question[] = [
     options: ['Vuex 3', 'Redux', 'Pinia', 'Context API'],
     correctAnswer: 2
   },
-
-  // Level 3 Upgrade Exam
   {
     id: 'q5',
     level: 3,
@@ -137,6 +132,19 @@ export const mockQuestions: Question[] = [
 ]
 
 export const mockUsers: User[] = [
+  {
+    id: 'u0',
+    username: 'admin',
+    email: 'admin@example.com',
+    role: 'admin',
+    name: 'System',
+    surname: 'Administrator',
+    profileImage: 'https://api.dicebear.com/7.x/bottts/svg?seed=Admin',
+    level: 4,
+    isActive: true,
+    province: 'Chiang Mai',
+    examHistory: []
+  },
   {
     id: 'u1',
     username: 'user1',

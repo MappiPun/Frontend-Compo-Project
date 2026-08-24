@@ -89,9 +89,20 @@ router.beforeEach((to, from, next) => {
     return next({ name: 'login' })
   }
 
+  if (to.name === 'login' && authStore.currentUser) {
+    if (authStore.isAdmin) {
+      return next({ name: 'admin' })
+    } else {
+      return next({ name: 'user-detail', params: { id: authStore.currentUser.id } })
+    }
+  }
+
   if (to.meta.role && authStore.currentUser?.role !== to.meta.role) {
-    // Redirect if role doesn't match
-    return next(authStore.currentUser?.role === 'admin' ? { name: 'admin' } : { name: 'user-dashboard' })
+    if (authStore.isAdmin) {
+      return next({ name: 'admin' })
+    } else {
+      return next({ name: 'user-detail', params: { id: authStore.currentUser?.id } })
+    }
   }
 
   next()

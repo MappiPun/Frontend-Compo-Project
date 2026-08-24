@@ -84,24 +84,33 @@ const router = createRouter({
 // Navigation Guard
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
+  const user = authStore.currentUser
 
-  if (to.meta.requiresAuth && !authStore.currentUser) {
+  if (to.meta.requiresAuth && !user) {
     return next({ name: 'login' })
   }
 
-  if (to.name === 'login' && authStore.currentUser) {
+  if (to.name === 'login' && user) {
+    if (!user.name || !user.surname) {
+      return next({ name: 'user-detail-edit', params: { id: user.id } })
+    }
     if (authStore.isAdmin) {
       return next({ name: 'admin' })
     } else {
-      return next({ name: 'user-detail', params: { id: authStore.currentUser.id } })
+      return next({ name: 'user-detail', params: { id: user.id } })
     }
   }
 
-  if (to.meta.role && authStore.currentUser?.role !== to.meta.role) {
+  // ป้องกันผู้ใช้ใหม่เปิดดูหน้าอื่น ถ้ายังใส่ข้อมูลไม่ครบ
+  if (user && (!user.name || !user.surname) && to.name !== 'user-detail-edit') {
+    return next({ name: 'user-detail-edit', params: { id: user.id } })
+  }
+
+  if (to.meta.role && user?.role !== to.meta.role) {
     if (authStore.isAdmin) {
       return next({ name: 'admin' })
     } else {
-      return next({ name: 'user-detail', params: { id: authStore.currentUser?.id } })
+      return next({ name: 'user-detail', params: { id: user?.id } })
     }
   }
 

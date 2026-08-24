@@ -101,6 +101,19 @@
       "isActive": true,
       "province": "Bangkok",
       "examHistory": []
+    },
+    {
+      "username": "map",
+      "name": "",
+      "surname": "",
+      "email": "map@example.com",
+      "province": "",
+      "role": "user",
+      "level": 1,
+      "isActive": true,
+      "profileImage": "https://api.dicebear.com/7.x/bottts/svg?seed=map",
+      "examHistory": [],
+      "id": "iQ0CdBdLca0"
     }
   ],
   "levels": [
@@ -110,8 +123,14 @@
       "title": "Beginner Passport",
       "passScore": 2,
       "benefits": [
-        { "id": "b1-1", "description": "Access to Basic eLearning Courses" },
-        { "id": "b1-2", "description": "Level 1 Digital Badge" }
+        {
+          "id": "b1-1",
+          "description": "Access to Basic eLearning Courses"
+        },
+        {
+          "id": "b1-2",
+          "description": "Level 1 Digital Badge"
+        }
       ],
       "services": [
         {
@@ -128,9 +147,18 @@
       "title": "Intermediate Passport",
       "passScore": 2,
       "benefits": [
-        { "id": "b2-1", "description": "Access to Intermediate eLearning Content" },
-        { "id": "b2-2", "description": "Level 2 Digital Badge" },
-        { "id": "b2-3", "description": "Priority Workshop Registration" }
+        {
+          "id": "b2-1",
+          "description": "Access to Intermediate eLearning Content"
+        },
+        {
+          "id": "b2-2",
+          "description": "Level 2 Digital Badge"
+        },
+        {
+          "id": "b2-3",
+          "description": "Priority Workshop Registration"
+        }
       ],
       "services": [
         {
@@ -153,9 +181,18 @@
       "title": "Advanced Passport",
       "passScore": 2,
       "benefits": [
-        { "id": "b3-1", "description": "Access to Advanced eLearning & Masterclasses" },
-        { "id": "b3-2", "description": "Level 3 Digital Badge" },
-        { "id": "b3-3", "description": "1-on-1 Mentorship Sessions" }
+        {
+          "id": "b3-1",
+          "description": "Access to Advanced eLearning & Masterclasses"
+        },
+        {
+          "id": "b3-2",
+          "description": "Level 3 Digital Badge"
+        },
+        {
+          "id": "b3-3",
+          "description": "1-on-1 Mentorship Sessions"
+        }
       ],
       "services": [
         {
@@ -178,9 +215,18 @@
       "title": "Expert Passport",
       "passScore": 2,
       "benefits": [
-        { "id": "b4-1", "description": "Full Unrestricted Access to All Resources" },
-        { "id": "b4-2", "description": "Level 4 Elite Badge" },
-        { "id": "b4-3", "description": "Industry Certification Sponsorship" }
+        {
+          "id": "b4-1",
+          "description": "Full Unrestricted Access to All Resources"
+        },
+        {
+          "id": "b4-2",
+          "description": "Level 4 Elite Badge"
+        },
+        {
+          "id": "b4-3",
+          "description": "Industry Certification Sponsorship"
+        }
       ],
       "services": [
         {
@@ -197,43 +243,74 @@
       "id": "q1",
       "level": 1,
       "questionText": "What is the primary core value of CAMT Passport?",
-      "options": ["Continuous Learning", "Gaming Only", "Social Networking", "Food Service"],
+      "options": [
+        "Continuous Learning",
+        "Gaming Only",
+        "Social Networking",
+        "Food Service"
+      ],
       "correctAnswer": 0
     },
     {
       "id": "q2",
       "level": 1,
       "questionText": "How many main service levels exist in CAMT Passport?",
-      "options": ["2 Levels", "3 Levels", "4 Levels", "5 Levels"],
+      "options": [
+        "2 Levels",
+        "3 Levels",
+        "4 Levels",
+        "5 Levels"
+      ],
       "correctAnswer": 2
     },
     {
       "id": "q3",
       "level": 2,
       "questionText": "In Vue 3, which Composition API function is used to create reactive state for objects?",
-      "options": ["ref()", "reactive()", "computed()", "watch()"],
+      "options": [
+        "ref()",
+        "reactive()",
+        "computed()",
+        "watch()"
+      ],
       "correctAnswer": 1
     },
     {
       "id": "q4",
       "level": 2,
       "questionText": "Which state management library is recommended for Vue 3?",
-      "options": ["Vuex 3", "Redux", "Pinia", "Context API"],
+      "options": [
+        "Vuex 3",
+        "Redux",
+        "Pinia",
+        "Context API"
+      ],
       "correctAnswer": 2
     },
     {
       "id": "q5",
       "level": 3,
       "questionText": "What is the main advantage of CI/CD pipelines in deployment?",
-      "options": ["Automated testing & integration", "Slower releases", "Manual FTP upload", "Harder debugging"],
+      "options": [
+        "Automated testing & integration",
+        "Slower releases",
+        "Manual FTP upload",
+        "Harder debugging"
+      ],
       "correctAnswer": 0
     },
     {
       "id": "q6",
       "level": 3,
       "questionText": "Which tool is commonly used for containerizing applications?",
-      "options": ["Docker", "Photoshop", "Nginx", "Vite"],
+      "options": [
+        "Docker",
+        "Photoshop",
+        "Nginx",
+        "Vite"
+      ],
       "correctAnswer": 0
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

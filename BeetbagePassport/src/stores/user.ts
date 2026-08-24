@@ -27,27 +27,27 @@ export const useUserStore = defineStore('user', () => {
     return users.value.find((u: User) => u.id === id)
   }
 
-  async function toggleUserStatus(userId: string) {
-    const target = users.value.find((u: User) => u.id === userId)
+  async function toggleUserStatus(username: string) {
+    const target = users.value.find((u: User) => u.username === username)
     if (target) {
-      const response = await apiClient.patch<User>(`/users/${userId}`, {
+      const response = await apiClient.patch<User>(`/users/${target.id}`, {
         isActive: !target.isActive
       })
       Object.assign(target, response.data)
     }
   }
 
-  async function updateUserProfile(userId: string, updatedData: Partial<User>) {
-    const target = users.value.find((u: User) => u.id === userId)
-    if (target) {
-      const response = await apiClient.patch<User>(`/users/${userId}`, updatedData)
+  async function updateUserProfile(username: string, updatedData: Partial<User>) {
+    const target = users.value.find((u: User) => u.username === username)
+    if (target?.id) {
+      const response = await apiClient.patch<User>(`/users/${target.id}`, updatedData)
       Object.assign(target, response.data)
     }
   }
 
-  async function recordExamResult(userId: string, score: number, total: number, passed: boolean) {
-    const target = users.value.find((u: User) => u.id === userId)
-    if (!target) return
+  async function recordExamResult(username: string, score: number, total: number, passed: boolean) {
+    const target = users.value.find((u: User) => u.username === username)
+    if (!target?.id) return
 
     const currentLvl = target.level ?? target.currentLevel ?? 1
 
@@ -66,15 +66,14 @@ export const useUserStore = defineStore('user', () => {
     target.examHistory.unshift(newHistory)
 
     if (passed && currentLvl < 4) {
-      const nextLevel = currentLvl + 1
-      target.level = nextLevel
-      target.currentLevel = nextLevel
+      target.level = Math.min(currentLvl + 1, 4)
     }
 
-    await apiClient.patch<User>(`/users/${userId}`, {
+    target.level = Math.min(Math.max(target.level ?? 1, 1), 4)
+
+    await apiClient.patch<User>(`/users/${target.id}`, {
       examHistory: target.examHistory,
-      level: target.level,
-      currentLevel: target.currentLevel
+      level: target.level
     })
   }
 

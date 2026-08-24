@@ -33,8 +33,8 @@ function changePage(page: number) {
   }
 }
 
-function goToDetail(userId: string) {
-  router.push(`/users/${userId}`)
+function goToDetail(username: string) {
+  router.push({ path: '/users/profile', query: { username } })
 }
 </script>
 
@@ -49,7 +49,7 @@ function goToDetail(userId: string) {
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <UserCard 
           v-for="user in paginatedUsers" 
-          :key="user.id" 
+          :key="user.username" 
           :user="user"
           @select="goToDetail"
           @toggle-status="userStore.toggleUserStatus"

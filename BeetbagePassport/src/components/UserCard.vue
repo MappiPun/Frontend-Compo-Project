@@ -6,15 +6,15 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'select', userId: string): void
-  (e: 'toggle-status', userId: string): void
+  (e: 'select', username: string): void
+  (e: 'toggle-status', username: string): void
 }>()
 </script>
 
 <template>
   <div 
     class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow cursor-pointer flex flex-col justify-between"
-    @click="emit('select', user.id)"
+    @click="emit('select', user.username)"
   >
     <div class="flex items-start space-x-4">
       <img :src="user.profileImage" :alt="user.name" class="w-12 h-12 rounded-full border border-gray-200" />
@@ -40,7 +40,7 @@ const emit = defineEmits<{
         ● {{ user.isActive ? 'Active' : 'Deactivated' }}
       </span>
       <button 
-        @click.stop="emit('toggle-status', user.id)"
+        @click.stop="emit('toggle-status', user.username)"
         class="px-2 py-1 text-xs rounded border transition-colors"
         :class="user.isActive ? 'border-red-200 text-red-600 hover:bg-red-50' : 'border-green-200 text-green-600 hover:bg-green-50'"
       >

@@ -24,7 +24,7 @@ async function handleLogin() {
   const success = await authStore.login(username.value)
   if (success && authStore.currentUser) {
     if (!authStore.currentUser.name || !authStore.currentUser.surname) {
-      router.push(`/users/${authStore.currentUser.id}/edit`)
+      router.push('/users/profile/edit')
     } else if (authStore.isAdmin) {
       router.push('/admin')
     } else {
@@ -73,7 +73,7 @@ async function handleSignUp() {
     const newUser = await authStore.register(username.value)
     authStore.setUser(newUser)
     password.value = ''
-    router.push(`/users/${newUser.id}/edit`)
+    router.push('/users/profile/edit')
   } catch {
     usernameError.value = 'Sign up failed. Please try again.'
   }

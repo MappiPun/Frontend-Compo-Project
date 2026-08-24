@@ -9,7 +9,7 @@ const authStore = useAuthStore()
 const name = ref('')
 const surname = ref('')
 const email = ref('')
-const phone = ref('')
+const phonenumber = ref('')
 const province = ref('')
 
 const isSaving = ref(false)
@@ -20,7 +20,7 @@ onMounted(() => {
     name.value = authStore.currentUser.name || ''
     surname.value = authStore.currentUser.surname || ''
     email.value = authStore.currentUser.email || ''
-    phone.value = authStore.currentUser.phone || ''
+    phonenumber.value = authStore.currentUser.phonenumber || ''
     province.value = authStore.currentUser.province || ''
   }
 })
@@ -37,11 +37,11 @@ async function handleSave() {
   errorMessage.value = ''
 
   try {
-    await authStore.updateProfile(authStore.currentUser.id, {
+    await authStore.updateProfile(authStore.currentUser.username, {
       name: name.value.trim(),
       surname: surname.value.trim(),
       email: email.value.trim(),
-      phone: phone.value.trim(),
+      phonenumber: phonenumber.value.trim(),
       province: province.value.trim()
     })
 
@@ -105,7 +105,7 @@ async function handleSave() {
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">Phone Number <span class="font-normal text-slate-400">(optional)</span></label>
           <input
-            v-model="phone"
+            v-model="phonenumber"
             type="tel"
             placeholder="0812345678"
             class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"

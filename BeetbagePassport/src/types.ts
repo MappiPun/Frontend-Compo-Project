@@ -10,11 +10,12 @@ export interface ExamHistory {
 }
 
 export interface User {
-  id: string
+  id?: string
   username: string
   name: string
   surname: string
   email: string
+  phonenumber?: string
   phone?: string
   province: string
   role: 'admin' | 'user'

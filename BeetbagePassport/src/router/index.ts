@@ -50,9 +50,8 @@ const router = createRouter({
       meta: { requiresAuth: true, role: 'user' }
     },
     {
-      path: '/users/:id',
+      path: '/users/profile',
       component: UserDetailView,
-      props: true,
       meta: { requiresAuth: true },
       children: [
         {
@@ -91,7 +90,7 @@ router.beforeEach((to, from, next) => {
 
   if (to.name === 'login' && user) {
     if (!user.name || !user.surname) {
-      return next({ name: 'user-detail-edit', params: { id: user.id } })
+      return next({ name: 'user-detail-edit' })
     }
     if (authStore.isAdmin) {
       return next({ name: 'admin' })
@@ -101,7 +100,7 @@ router.beforeEach((to, from, next) => {
   }
 
   if (user && (!user.name || !user.surname) && to.name !== 'user-detail-edit') {
-    return next({ name: 'user-detail-edit', params: { id: user.id } })
+    return next({ name: 'user-detail-edit' })
   }
 
   if (to.meta.role && user?.role !== to.meta.role) {

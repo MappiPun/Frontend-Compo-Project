@@ -1,9 +1,9 @@
 {
   "users": [
     {
-      "id": "u0",
       "username": "admin",
       "email": "admin@example.com",
+      "phonenumber": "0614837295",
       "role": "admin",
       "name": "System",
       "surname": "Administrator",
@@ -11,12 +11,13 @@
       "level": 4,
       "isActive": true,
       "province": "Chiang Mai",
-      "examHistory": []
+      "examHistory": [],
+      "id": "OMvVY-KIFZI"
     },
     {
-      "id": "u1",
       "username": "user1",
       "email": "user1@example.com",
+      "phonenumber": "0976213840",
       "role": "user",
       "name": "Somchai",
       "surname": "Jaidee",
@@ -24,12 +25,13 @@
       "level": 1,
       "isActive": true,
       "province": "Chiang Mai",
-      "examHistory": []
+      "examHistory": [],
+      "id": "Bj9GXX8xneE"
     },
     {
-      "id": "u2",
       "username": "user2",
       "email": "user2@example.com",
+      "phonenumber": "0935742168",
       "role": "user",
       "name": "Maneenat",
       "surname": "Srisuk",
@@ -40,7 +42,6 @@
       "examHistory": [
         {
           "id": "eh-1",
-          "userId": "u2",
           "level": 1,
           "score": 2,
           "totalQuestions": 2,
@@ -48,12 +49,13 @@
           "passed": true,
           "attemptedAt": "2026-08-15T10:30:00Z"
         }
-      ]
+      ],
+      "id": "2_3hBiGB3AY"
     },
     {
-      "id": "u3",
       "username": "user3",
       "email": "user3@example.com",
+      "phonenumber": "0953187426",
       "role": "user",
       "name": "Ananda",
       "surname": "Wong",
@@ -61,12 +63,13 @@
       "level": 1,
       "isActive": true,
       "province": "Chiang Mai",
-      "examHistory": []
+      "examHistory": [],
+      "id": "ePRC2mnKofo"
     },
     {
-      "id": "u4",
       "username": "user4",
       "email": "user4@example.com",
+      "phonenumber": "0817463925",
       "role": "user",
       "name": "Kanya",
       "surname": "Ratanaporn",
@@ -74,12 +77,13 @@
       "level": 3,
       "isActive": true,
       "province": "Phuket",
-      "examHistory": []
+      "examHistory": [],
+      "id": "YdRhUpfGjOQ"
     },
     {
-      "id": "u5",
       "username": "user5",
       "email": "user5@example.com",
+      "phonenumber": "0612958473",
       "role": "user",
       "name": "Niran",
       "surname": "Prakarn",
@@ -87,12 +91,13 @@
       "level": 1,
       "isActive": false,
       "province": "Chiang Mai",
-      "examHistory": []
+      "examHistory": [],
+      "id": "KYQu12RDLXg"
     },
     {
-      "id": "u6",
       "username": "user6",
       "email": "user6@example.com",
+      "phonenumber": "0974385612",
       "role": "user",
       "name": "Ploy",
       "surname": "Chareon",
@@ -100,21 +105,23 @@
       "level": 4,
       "isActive": true,
       "province": "Bangkok",
-      "examHistory": []
+      "examHistory": [],
+      "id": "pn_wwssnb6M"
     },
     {
       "username": "map",
       "name": "Papon",
       "surname": "Punyanitya",
       "email": "map@example.com",
+      "phonenumber": "0936825147",
       "province": "",
       "role": "user",
       "level": 1,
       "isActive": true,
       "profileImage": "https://api.dicebear.com/7.x/bottts/svg?seed=map",
       "examHistory": [],
-      "id": "iQ0CdBdLca0",
-      "phone": "0888852191"
+      "phone": "0888852191",
+      "id": "hc08Yb2qUPM"
     }
   ],
   "levels": [

@@ -69,10 +69,14 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function updateProfile(userId: string, updatedData: Partial<User>) {
+  async function updateProfile(username: string, updatedData: Partial<User>) {
     try {
-      const response = await apiClient.patch<User>(`/users/${userId}`, updatedData)
-      if (currentUser.value && currentUser.value.id === userId) {
+      const lookup = await apiClient.get<User[]>(`/users?username=${encodeURIComponent(username)}`)
+      const user = lookup.data[0]
+      if (!user) throw new Error('User not found')
+
+      const response = await apiClient.patch<User>(`/users/${user.id}`, updatedData)
+      if (currentUser.value?.username === username) {
         const mergedUser = { ...currentUser.value, ...response.data }
         setUser(mergedUser)
       }

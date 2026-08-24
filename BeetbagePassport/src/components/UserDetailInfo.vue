@@ -23,10 +23,10 @@ defineProps<{
         <span class="font-bold">Full Name:</span> {{ user.name }} {{ user.surname }}
       </p>
       <p>
-        <span class="font-bold">Email:</span> {{ user.email || 'somchaihamyaimak@example.com (or N/A)' }}
+        <span class="font-bold">Email:</span> {{ user.email || 'N/A' }}
       </p>
       <p>
-        <span class="font-bold">Phone:</span> {{ user.phone || '012-345-6789 (or N/A)' }}
+        <span class="font-bold">Phone:</span> {{ user.phonenumber ? user.phonenumber.replace(/^(\d{3})(\d{3})(\d{4})$/, '$1-$2-$3') : 'N/A' }}
       </p>
       <p>
         <span class="font-bold">Province:</span> {{ user.province || 'Bangkok' }}

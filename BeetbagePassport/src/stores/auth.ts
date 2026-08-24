@@ -4,8 +4,19 @@ import type { User } from '@/types'
 import { apiClient } from '@/services/api'
 
 export const useAuthStore = defineStore('auth', () => {
-  const currentUser = ref<User | null>(null)
+  const savedUser = localStorage.getItem('currentUser')
+  const currentUser = ref<User | null>(savedUser ? JSON.parse(savedUser) : null)
+
   const isAdmin = computed(() => currentUser.value?.role === 'admin')
+
+  function setUser(user: User | null) {
+    currentUser.value = user
+    if (user) {
+      localStorage.setItem('currentUser', JSON.stringify(user))
+    } else {
+      localStorage.removeItem('currentUser')
+    }
+  }
 
   async function fetchUsers() {
     try {
@@ -24,7 +35,7 @@ export const useAuthStore = defineStore('auth', () => {
       const user = response.data[0]
 
       if (user && user.isActive) {
-        currentUser.value = user
+        setUser(user) 
         return true
       }
       return false
@@ -62,7 +73,8 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const response = await apiClient.patch<User>(`/users/${userId}`, updatedData)
       if (currentUser.value && currentUser.value.id === userId) {
-        currentUser.value = { ...currentUser.value, ...response.data }
+        const mergedUser = { ...currentUser.value, ...response.data }
+        setUser(mergedUser)
       }
       return response.data
     } catch (error) {
@@ -72,12 +84,13 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   function logout() {
-    currentUser.value = null
+    setUser(null) 
   }
 
   return {
     currentUser,
     isAdmin,
+    setUser,
     fetchUsers,
     login,
     register,

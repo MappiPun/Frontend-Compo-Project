@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { apiClient } from '@/services/api'
+import axios from 'axios'
 
 export interface ELearningContent {
   id: string
@@ -10,14 +10,14 @@ export interface ELearningContent {
   videoUrl: string
 }
 
-const API_URL = '/elearning'
+const API_URL = 'http://localhost:3000/elearning'
 
 export const useELearningStore = defineStore('elearning', () => {
   const contents = ref<ELearningContent[]>([])
 
   async function fetchContents() {
     try {
-      const res = await apiClient.get<ELearningContent[]>(API_URL)
+      const res = await axios.get<ELearningContent[]>(API_URL)
       contents.value = res.data
     } catch (err) {
       console.error('Failed to fetch elearning contents:', err)
@@ -26,7 +26,7 @@ export const useELearningStore = defineStore('elearning', () => {
 
   async function addContent(content: Omit<ELearningContent, 'id'>) {
     try {
-      const res = await apiClient.post<ELearningContent>(API_URL, content)
+      const res = await axios.post<ELearningContent>(API_URL, content)
       contents.value.push(res.data)
     } catch (err) {
       console.error('Failed to add elearning content:', err)
@@ -35,7 +35,7 @@ export const useELearningStore = defineStore('elearning', () => {
 
   async function deleteContent(id: string) {
     try {
-      await apiClient.delete(`${API_URL}/${id}`)
+      await axios.delete(`${API_URL}/${id}`)
       contents.value = contents.value.filter((item) => item.id !== id)
     } catch (err) {
       console.error('Failed to delete elearning content:', err)
@@ -44,7 +44,7 @@ export const useELearningStore = defineStore('elearning', () => {
 
   async function updateContent(id: string, content: Omit<ELearningContent, 'id'>) {
     try {
-      const res = await apiClient.put<ELearningContent>(`${API_URL}/${id}`, content)
+      const res = await axios.put<ELearningContent>(`${API_URL}/${id}`, content)
       const index = contents.value.findIndex((item) => item.id === id)
       if (index !== -1) contents.value[index] = res.data
     } catch (err) {

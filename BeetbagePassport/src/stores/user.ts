@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { useAuthStore } from './auth'
 import { ref } from 'vue'
 import type { User, LevelDetail, Question, ExamHistory } from '@/types'
 import { apiClient } from '@/services/api'
@@ -45,36 +46,42 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  async function recordExamResult(username: string, score: number, total: number, passed: boolean) {
+  async function recordExamResult(username: string, examLevel: number, score: number, total: number, passed: boolean) {
     const target = users.value.find((u: User) => u.username === username)
     if (!target?.id) return
 
     const currentLvl = target.level ?? target.currentLevel ?? 1
-
     const newHistory: ExamHistory = {
       id: `h-${Date.now()}`,
-      level: currentLvl,
+      level: examLevel,
       score,
       totalQuestions: total,
       passed,
       attemptedAt: new Date().toISOString()
     }
 
-    if (!target.examHistory) {
-      target.examHistory = []
+    const updatedHistory = [newHistory, ...(target.examHistory ?? [])]
+    const updatedLevel = passed && examLevel === currentLvl && currentLvl < 4
+      ? Math.min(currentLvl + 1, 4)
+      : currentLvl
+
+    try {
+      const response = await apiClient.patch<User>(`/users/${target.id}`, {
+        examHistory: updatedHistory,
+        level: updatedLevel
+      })
+
+      Object.assign(target, response.data)
+
+      // Keep the authenticated user's cached copy in sync immediately.
+      const authStore = useAuthStore()
+      if (authStore.currentUser?.id === response.data.id) {
+        authStore.setUser(response.data)
+      }
+    } catch (error) {
+      console.error('Record exam result error:', error)
+      throw error
     }
-    target.examHistory.unshift(newHistory)
-
-    if (passed && currentLvl < 4) {
-      target.level = Math.min(currentLvl + 1, 4)
-    }
-
-    target.level = Math.min(Math.max(target.level ?? 1, 1), 4)
-
-    await apiClient.patch<User>(`/users/${target.id}`, {
-      examHistory: target.examHistory,
-      level: target.level
-    })
   }
 
   function getLevelDetail(levelNumber: number) {

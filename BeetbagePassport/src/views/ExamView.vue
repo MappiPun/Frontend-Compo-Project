@@ -92,6 +92,7 @@ async function submitExam() {
   if (authStore.currentUser?.username) {
     await userStore.recordExamResult(
       authStore.currentUser.username,
+      selectedCourse.value.level,
       correctCount,
       selectedCourse.value.questions.length,
       passed

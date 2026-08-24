@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { User } from '@/types'
+import type { User, ExamHistory } from '@/types'
 import { apiClient } from '@/services/api'
 
 export const useAuthStore = defineStore('auth', () => {
@@ -45,7 +45,6 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  // ปรับรับ userData ครบชุด เพื่อส่งไป POST ที่ backend (db.json)
   async function register(userData: {
     username: string
     name: string
@@ -73,7 +72,7 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const response = await apiClient.post<User>('/users', newUser)
       if (response.data) {
-        setUser(response.data) // ล็อกอินผู้ใช้ทันทีหลังสมัครเสร็จ
+        setUser(response.data)
       }
       return response.data
     } catch (error) {
@@ -100,6 +99,37 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  // ปรับประเภทข้อมูลใน addExamHistory ให้ยืดหยุ่นรองรับทุก Field จาก UI Component
+  async function addExamHistory(examResult: {
+    id?: string
+    level?: number
+    title?: string
+    examTitle?: string
+    score: number
+    totalQuestions?: number
+    passed: boolean
+    attemptedAt?: string
+    date?: string
+  }) {
+    if (!currentUser.value) return
+
+    const currentHistory = currentUser.value.examHistory || []
+    const updatedHistory = [...currentHistory, examResult]
+
+    try {
+      const response = await apiClient.patch<User>(`/users/${currentUser.value.id}`, {
+        examHistory: updatedHistory
+      })
+      if (response.data) {
+        setUser(response.data)
+      }
+      return response.data
+    } catch (error) {
+      console.error('Add exam history error:', error)
+      throw error
+    }
+  }
+
   function logout() {
     setUser(null) 
   }
@@ -112,6 +142,7 @@ export const useAuthStore = defineStore('auth', () => {
     login,
     register,
     updateProfile,
+    addExamHistory,
     logout
   }
 })

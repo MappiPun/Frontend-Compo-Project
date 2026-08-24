@@ -2,11 +2,15 @@
 import { ref, computed } from 'vue'
 import UserProfileHeader from '@/components/UserProfileHeader.vue'
 import UserNavigation from '@/components/UserNavigation.vue'
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
 
 // ข้อมูลตัวอย่างคอร์ส eLearning และชุดข้อสอบ
 const courses = ref([
   {
     id: 'c1',
+    level: 1,
     title: 'CAMT Passport Core Values & Basics',
     description: 'เรียนรู้ค่านิยมหลักและการใช้งานระบบ CAMT Passport เบื้องต้น',
     questionsCount: 2,
@@ -28,6 +32,7 @@ const courses = ref([
   },
   {
     id: 'c2',
+    level: 2,
     title: 'Intermediate Web Security',
     description: 'ความรู้พื้นฐานเกี่ยวกับ Authentication และ Web Security สำหรับ Level 2',
     questionsCount: 2,
@@ -67,18 +72,35 @@ function backToCourseList() {
   isSubmitted.value = false
 }
 
-function submitExam() {
+async function submitExam() {
   if (!selectedCourse.value) return
 
   let calculatedScore = 0
+  let correctCount = 0
+
   selectedCourse.value.questions.forEach((q) => {
     if (userAnswers.value[q.id] === q.correctAnswer) {
       calculatedScore += 50
+      correctCount += 1
     }
   })
 
   score.value = calculatedScore
   isSubmitted.value = true
+
+  const passed = calculatedScore >= selectedCourse.value.passingScore
+
+  // ส่งข้อมูลที่สะกดชื่อ Property ตรงกับ UI Component
+  await authStore.addExamHistory({
+    id: Date.now().toString(),
+    level: selectedCourse.value.level || 1,
+    title: selectedCourse.value.title,
+    examTitle: selectedCourse.value.title,
+    score: correctCount, // ส่งเป็นจำนวนข้อที่ตอบถูก (เช่น 1 หรือ 2) เพื่อให้ UI แสดง 1/2
+    totalQuestions: selectedCourse.value.questionsCount,
+    passed: passed,
+    attemptedAt: new Date().toISOString() // ส่ง attemptedAt ISO String สำหรับ new Date()
+  })
 }
 
 const isAllAnswered = computed(() => {

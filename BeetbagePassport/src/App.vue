@@ -8,6 +8,10 @@ import { RouterView } from 'vue-router'
 
 <style>
 
+html {
+  overflow-y: scroll;
+}
+
 body {
   margin: 0;
   padding: 0;

@@ -88,7 +88,7 @@
       "surname": "Prakarn",
       "profileImage": "https://api.dicebear.com/7.x/bottts/svg?seed=Niran",
       "level": 1,
-      "isActive": true,
+      "isActive": false,
       "province": "Chiang Mai",
       "examHistory": [],
       "id": "KYQu12RDLXg"
@@ -275,7 +275,7 @@
       "id": "4",
       "level": 4,
       "title": "Expert Passport",
-      "passScore": 2,
+      "passScore": 1,
       "benefits": [
         {
           "id": "b4-1",
@@ -388,18 +388,32 @@
   ],
   "elearning": [
     {
-      "id": "1",
       "title": "Introduction to Core Foundations",
       "description": "บทเรียนพื้นฐานสำหรับผู้เริ่มต้น Level 1",
       "level": 1,
-      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ"
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "id": "1"
     },
     {
       "title": "SPIN",
-      "description": "HOW TO SPIN",
+      "description": "Screw everything, let's just spin endlessly!",
       "level": 2,
       "videoUrl": "https://www.youtube.com/embed/Soy4jGPHr3g",
       "id": "8wkBbykRoVg"
+    },
+    {
+      "title": "F O R G E T   E V E R Y T H I N G",
+      "description": "Do it.",
+      "level": 4,
+      "videoUrl": "https://www.youtube.com/embed/wJWksPWDKOc",
+      "id": "yyrisGEw1OI"
+    },
+    {
+      "title": "Immerse yourself.",
+      "description": "You must memorize the entirety of Bee Movie's script. Do it.",
+      "level": 3,
+      "videoUrl": "https://www.youtube.com/embed/QsGYNfagHlU",
+      "id": "lEdFlV8hoI0"
     }
   ],
   "keyName": [],

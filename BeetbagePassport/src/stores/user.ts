@@ -103,10 +103,18 @@ export const useUserStore = defineStore('user', () => {
     selectedUserId.value = id
   }
 
-  function toggleUserStatus(userId: string | number) {
+  async function toggleUserStatus(userId: string | number) {
     const user = users.value.find((u) => u.id === userId || u.username === userId)
-    if (user) {
-      user.isActive = !user.isActive
+    if (!user) return
+
+    const newStatus = !user.isActive
+    try {
+      const response = await apiClient.patch(`/users/${user.id}`, {
+        isActive: newStatus
+      })
+      user.isActive = response.data.isActive ?? newStatus
+    } catch (err) {
+      console.error('Failed to update user active status:', err)
     }
   }
 

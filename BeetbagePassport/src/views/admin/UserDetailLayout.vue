@@ -3,6 +3,7 @@ import { onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import AdminProfileHeader from '@/components/AdminProfileHeader.vue'
+import AdminNavigation from '@/components/AdminNavigation.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -27,6 +28,9 @@ function goBack() {
 <template>
   <div class="min-h-screen bg-slate-50 p-6">
     <AdminProfileHeader />
+    <div class="max-w-4xl mx-auto mt-6">
+      <AdminNavigation />
+    </div>
 
     <main class="max-w-4xl mx-auto p-6 space-y-6 bg-white rounded-xl border border-slate-200 shadow-sm mt-6">
       <button @click="goBack" class="text-xs text-purple-600 hover:underline">&larr; Back to Admin</button>

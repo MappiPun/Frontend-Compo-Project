@@ -193,6 +193,12 @@ async function saveProfileEdit() {
       <p>
         <span class="font-bold">Registered:</span> 15 August 2026
       </p>
+      <p v-if="props.user">
+        <span class="font-bold">Status:</span>
+        <span :class="activeUser.isActive ? 'text-green-600' : 'text-red-500'">
+          ● {{ activeUser.isActive ? 'Active' : 'Deactivated' }}
+        </span>
+      </p>
     </div>
 
     <!-- Edit Profile Modal -->

@@ -8,6 +8,7 @@ defineProps<{
 const emit = defineEmits<{
   (e: 'select', username: string): void
   (e: 'toggle-status', username: string): void
+  (e: 'delete-user', id: string | number): void
 }>()
 </script>
 
@@ -39,13 +40,24 @@ const emit = defineEmits<{
       >
         ● {{ user.isActive ? 'Active' : 'Deactivated' }}
       </span>
-      <button 
-        @click.stop="emit('toggle-status', user.username)"
-        class="px-2 py-1 text-xs rounded border transition-colors"
-        :class="user.isActive ? 'border-red-200 text-red-600 hover:bg-red-50' : 'border-green-200 text-green-600 hover:bg-green-50'"
-      >
-        {{ user.isActive ? 'Deactivate' : 'Activate' }}
-      </button>
+
+      <div class="flex items-center space-x-2">
+        <button 
+          @click.stop="emit('toggle-status', user.username)"
+          class="px-2 py-1 text-xs rounded border transition-colors"
+          :class="user.isActive ? 'border-red-200 text-red-600 hover:bg-red-50' : 'border-green-200 text-green-600 hover:bg-green-50'"
+        >
+          {{ user.isActive ? 'Deactivate' : 'Activate' }}
+        </button>
+
+        <button 
+          v-if="user.id"
+          @click.stop="emit('delete-user', user.id)"
+          class="px-2 py-1 text-xs rounded bg-red-600 text-white hover:bg-red-700 transition-colors"
+        >
+          Delete
+        </button>
+      </div>
     </div>
   </div>
 </template>

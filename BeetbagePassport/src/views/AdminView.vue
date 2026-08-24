@@ -4,6 +4,7 @@ import { ref, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import UserCard from '@/components/UserCard.vue'
+import { apiClient } from '@/services/api'
 
 const userStore = useUserStore()
 const route = useRoute()
@@ -69,6 +70,19 @@ function changePage(page: number) {
 function goToUserDetail(userId: string | number) {
   router.push(`/admin/users/${userId}/info`)
 }
+
+async function handleDeleteUser(userId: string | number) {
+  try {
+    await apiClient.delete(`/users/${userId}`)
+    
+    userStore.users = userStore.users.filter(u => u.id !== userId && u.username !== userId)
+
+    alert('User deleted successfully.')
+  } catch (error) {
+    console.error('Delete user error:', error)
+    alert('Failed to delete user.')
+  }
+}
 </script>
 
 <template>
@@ -76,8 +90,6 @@ function goToUserDetail(userId: string | number) {
     <AdminProfileHeader />
 
     <main class="max-w-6xl mx-auto p-6 space-y-6">
-      
-      <!-- Admin Navigation Tabs -->
       <div class="flex border-b border-slate-200 space-x-4">
         <button
           @click="activeTab = 'users'"
@@ -99,7 +111,6 @@ function goToUserDetail(userId: string | number) {
         </button>
       </div>
 
-      <!-- Tab 1: User Management -->
       <div v-if="activeTab === 'users'" class="space-y-6">
         <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
@@ -146,6 +157,7 @@ function goToUserDetail(userId: string | number) {
             :user="user"
             @select="goToUserDetail(user.id || user.username)"
             @toggle-status="userStore.toggleUserStatus"
+            @delete-user="handleDeleteUser"
           />
         </div>
         
@@ -176,7 +188,6 @@ function goToUserDetail(userId: string | number) {
         </div>
       </div>
 
-      <!-- Tab 2: Levels & Benefits Overview -->
       <div v-else class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
         <h2 class="text-base font-bold text-slate-800">Level Criteria & Benefits Management</h2>
         <p class="text-xs text-slate-500">Configure level passing criteria, questions, and view benefits/services for each level.</p>

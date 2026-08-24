@@ -7,6 +7,7 @@ import UserDashboardView from '@/views/UserDashboardView.vue'
 import UserDetailView from '@/views/UserDetailView.vue'
 import ELearningView from '@/views/ELearningView.vue'
 import ExamView from '@/views/ExamView.vue'
+import UserBadge from '@/components/UserBadge.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 
 import UserDetailInfo from '@/components/UserDetailInfo.vue'
@@ -63,6 +64,11 @@ const router = createRouter({
           path: 'history',
           name: 'user-detail-history',
           component: UserExamHistory
+        },
+        {
+          path: 'badges',
+          name: 'user-detail-badges',
+          component: UserBadge
         },
         {
           path: 'edit',

@@ -1,12 +1,9 @@
 <script setup lang="ts">
-import { useRoute } from 'vue-router'
-
-import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
 const router = useRouter()
-const route = useRoute()
 
 function handleLogout() {
   authStore.logout()
@@ -15,8 +12,11 @@ function handleLogout() {
 </script>
 
 <template>
-  <div class="flex items-center gap-3">
-
+  <header class="max-w-5xl mx-auto flex justify-between items-center mb-6">
+    <div class="flex items-baseline gap-2">
+      <h1 class="text-3xl font-extrabold text-slate-900">CAMT</h1>
+      <h1 class="text-3xl font-extrabold text-purple-600">Passport</h1>
+    </div>
 
     <div v-if="authStore.currentUser" class="flex items-center gap-3 bg-white px-4 py-1.5 rounded-2xl border border-slate-300 shadow-sm">
       <img
@@ -27,7 +27,7 @@ function handleLogout() {
       <div class="text-xs text-left">
         <p class="font-bold text-slate-800">{{ authStore.currentUser.name || authStore.currentUser.username }}</p>
         <RouterLink
-          :to="'/users/profile'"
+          to="/users/profile"
           class="text-slate-400 text-[10px] hover:text-purple-600 hover:underline"
         >
           View profile
@@ -40,5 +40,5 @@ function handleLogout() {
         Sign Out
       </button>
     </div>
-  </div>
+  </header>
 </template>

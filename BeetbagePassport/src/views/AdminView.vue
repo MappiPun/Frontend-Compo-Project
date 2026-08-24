@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import AdminProfileHeader from '@/components/AdminProfileHeader.vue'
 import { ref, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
-import UserProfileHeader from '@/components/UserProfileHeader.vue'
 import UserCard from '@/components/UserCard.vue'
 
 const userStore = useUserStore()
@@ -20,11 +20,15 @@ watch(
   }
 )
 
-const totalPages = computed(() => Math.ceil(userStore.users.length / pageSize))
+const availableUsers = computed(() =>
+  userStore.users.filter((user) => user.role !== 'admin' && user.username !== 'admin')
+)
+
+const totalPages = computed(() => Math.ceil(availableUsers.value.length / pageSize))
 
 const paginatedUsers = computed(() => {
   const start = (currentPage.value - 1) * pageSize
-  return userStore.users.slice(start, start + pageSize)
+  return availableUsers.value.slice(start, start + pageSize)
 })
 
 function changePage(page: number) {
@@ -39,11 +43,8 @@ function goToDetail(username: string) {
 </script>
 
 <template>
-  <div class="min-h-screen bg-slate-50">
-    <header class="bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center">
-      <h1 class="text-xl font-bold text-slate-800">Admin Portal - User Management</h1>
-      <UserProfileHeader />
-    </header>
+  <div class="min-h-screen bg-slate-50 p-6">
+    <AdminProfileHeader />
 
     <main class="max-w-6xl mx-auto p-6 space-y-6">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">

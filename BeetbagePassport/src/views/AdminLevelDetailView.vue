@@ -3,7 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import AdminProfileHeader from '@/components/AdminProfileHeader.vue'
 import AdminNavigation from '@/components/AdminNavigation.vue'
-import axios from 'axios'
+import { apiClient } from '@/services/api'
 
 interface Question {
   id: string
@@ -30,12 +30,12 @@ const fetchLevelData = async () => {
   isLoading.value = true
   try {
 
-    const levelRes = await axios.get(`http://localhost:3000/levels/${levelId.value}`)
+    const levelRes = await apiClient.get(`/levels/${levelId.value}`)
     if (levelRes.data && levelRes.data.passScore !== undefined) {
       passScore.value = levelRes.data.passScore
     }
 
-    const questionsRes = await axios.get(`http://localhost:3000/questions?level=${levelId.value}`)
+    const questionsRes = await apiClient.get(`/questions?level=${levelId.value}`)
     questions.value = questionsRes.data
   } catch (err) {
     console.error('Failed to fetch level data:', err)
@@ -67,7 +67,7 @@ async function addQuestion() {
   }
 
   try {
-    await axios.post('http://localhost:3000/questions', newQ)
+    await apiClient.post('/questions', newQ)
     questions.value.push(newQ)
     newQuestionText.value = ''
     newOptions.value = ['', '', '', '']
@@ -83,7 +83,7 @@ async function deleteQuestion(questionId: string) {
   if (!confirm('คุณต้องการลบคำถามนี้ใช่หรือไม่?')) return
 
   try {
-    await axios.delete(`http://localhost:3000/questions/${questionId}`)
+    await apiClient.delete(`/questions/${questionId}`)
     questions.value = questions.value.filter(q => q.id !== questionId)
     alert('ลบคำถามสำเร็จ')
   } catch (err) {
@@ -98,7 +98,7 @@ async function saveChanges() {
   }
 
   try {
-    await axios.patch(`http://localhost:3000/levels/${levelId.value}`, {
+    await apiClient.patch(`/levels/${levelId.value}`, {
       passScore: Number(passScore.value)
     })
     alert(`Saved changes for Level ${levelId.value}`)

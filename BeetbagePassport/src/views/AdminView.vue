@@ -7,7 +7,6 @@ import { useUserStore } from '@/stores/user'
 import { useELearningStore } from '@/stores/elearning'
 import UserCard from '@/components/UserCard.vue'
 import { apiClient } from '@/services/api'
-import axios from 'axios'
 
 interface LevelData {
   id: string
@@ -64,7 +63,7 @@ const fetchUsers = async () => {
 
 const fetchLevels = async () => {
   try {
-    const res = await axios.get('http://localhost:3000/levels')
+    const res = await apiClient.get('/levels')
     levelsData.value = res.data
   } catch (err) {
     console.error('Failed to fetch levels:', err)

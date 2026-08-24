@@ -51,14 +51,13 @@ const router = createRouter({
     },
     {
       path: '/users/:id',
-      name: 'user-detail',
       component: UserDetailView,
       props: true,
       meta: { requiresAuth: true },
       children: [
         {
           path: '',
-          name: 'user-detail-info',
+          name: 'user-detail',
           component: UserDetailInfo
         },
         {
@@ -97,11 +96,10 @@ router.beforeEach((to, from, next) => {
     if (authStore.isAdmin) {
       return next({ name: 'admin' })
     } else {
-      return next({ name: 'user-detail', params: { id: user.id } })
+      return next({ name: 'user-dashboard' })
     }
   }
 
-  // ป้องกันผู้ใช้ใหม่เปิดดูหน้าอื่น ถ้ายังใส่ข้อมูลไม่ครบ
   if (user && (!user.name || !user.surname) && to.name !== 'user-detail-edit') {
     return next({ name: 'user-detail-edit', params: { id: user.id } })
   }
@@ -110,7 +108,7 @@ router.beforeEach((to, from, next) => {
     if (authStore.isAdmin) {
       return next({ name: 'admin' })
     } else {
-      return next({ name: 'user-detail', params: { id: user?.id } })
+      return next({ name: 'user-dashboard' })
     }
   }
 

@@ -47,11 +47,11 @@ async function handleSave() {
 
     alert('Profile updated successfully!')
     
-    // บันทึกเสร็จส่งไปหน้าโปรไฟล์ตาม Role
+    // อัปเดตเสร็จแล้วส่งไปยัง User Dashboard ทันที
     if (authStore.isAdmin) {
       router.push('/admin')
     } else {
-      router.push(`/users/${authStore.currentUser.id}`)
+      router.push('/user')
     }
   } catch {
     errorMessage.value = 'Failed to update profile. Please try again.'

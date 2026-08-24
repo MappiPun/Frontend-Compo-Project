@@ -45,15 +45,28 @@ const router = createRouter({
       meta: { requiresAuth: true, role: 'admin' }
     },
     {
-      path: '/admin/users/:id/info',
-      name: 'admin-user-detail',
+      path: '/admin/users/:id',
       component: UserDetailView,
       meta: { requiresAuth: true, role: 'admin' },
       children: [
         {
           path: '',
+          redirect: to => `/admin/users/${to.params.id}/info`
+        },
+        {
+          path: 'info',
           name: 'admin-user-detail-info',
           component: UserDetailInfo
+        },
+        {
+          path: 'history',
+          name: 'admin-user-detail-history',
+          component: UserExamHistory
+        },
+        {
+          path: 'badges',
+          name: 'admin-user-detail-badges',
+          component: UserBadge
         }
       ]
     },

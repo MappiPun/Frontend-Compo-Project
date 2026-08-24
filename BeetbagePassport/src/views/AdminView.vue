@@ -56,6 +56,7 @@ const fetchLevels = async () => {
 onMounted(() => {
   fetchUsers()
   fetchLevels()
+  elearningStore.fetchContents()
 })
 
 watch(
@@ -122,7 +123,7 @@ async function handleDeleteUser(userId: string | number) {
   }
 }
 
-function handleAddELearning() {
+async function handleAddELearning() {
   if (!newTitle.value || !newVideoUrl.value) return
 
   let embedUrl = newVideoUrl.value
@@ -131,7 +132,7 @@ function handleAddELearning() {
     embedUrl = `https://www.youtube.com/embed/${match[1]}`
   }
 
-  elearningStore.addContent({
+  await elearningStore.addContent({
     title: newTitle.value,
     description: newDescription.value,
     level: Number(newLevel.value),

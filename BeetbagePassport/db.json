@@ -363,6 +363,22 @@
       "correctAnswer": 0
     }
   ],
+  "elearning": [
+    {
+      "id": "1",
+      "title": "Introduction to Core Foundations",
+      "description": "บทเรียนพื้นฐานสำหรับผู้เริ่มต้น Level 1",
+      "level": 1,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ"
+    },
+    {
+      "title": "How to Spin",
+      "description": "https://youtu.be/Soy4jGPHr3g?si=cwDOpJfryvchYqMX",
+      "level": 2,
+      "videoUrl": "SPINN",
+      "id": "XMP9nuL74NY"
+    }
+  ],
   "keyName": [],
   "$schema": "./node_modules/json-server/schema.json"
 }

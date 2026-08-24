@@ -16,8 +16,21 @@ const router = useRouter()
 
 const currentLevelData = computed(() => {
   const user = userStore.users.find((u) => u.username === authStore.currentUser?.username)
-  const lvl = Math.min(Math.max(user?.level ?? 1, 1), 4)
-  return userStore.getLevelDetail(lvl)
+  const level = Math.min(Math.max(user?.level ?? 1, 1), 4)
+  return userStore.getLevelDetail(level)
+})
+
+const dashboardServices = computed(() => {
+  const currentLevel = currentLevelData.value?.level ?? 1
+  const services = [1, 2, 3, 4].flatMap((level) => {
+    const levelData = userStore.getLevelDetail(level)
+    return (levelData?.services ?? []).map((service) => ({ ...service, level }))
+  })
+
+  return services
+    .filter((service) => service.level <= currentLevel)
+    .sort((a, b) => a.level - b.level)
+    .slice(-3)
 })
 </script>
 
@@ -78,10 +91,24 @@ const currentLevelData = computed(() => {
         </div>
 
         <div class="border border-slate-300 rounded-2xl p-6">
-          <h3 class="font-bold text-slate-800 text-sm mb-4">Available Services</h3>
-          <div v-for="s in currentLevelData?.services" :key="s.id" class="p-3 bg-slate-50 rounded-lg text-xs mb-2 last:mb-0">
-            <p class="font-bold text-slate-700">{{ s.name }}</p>
-            <p class="text-slate-500 mt-0.5">{{ s.description }}</p>
+          <div class="flex items-center justify-between gap-3 mb-4">
+            <h3 class="font-bold text-slate-800 text-sm">Available Services</h3>
+            <button
+              type="button"
+              class="text-[11px] font-semibold text-purple-600 hover:text-purple-700"
+              @click="router.push('/user/services')"
+            >
+              View Services
+            </button>
+          </div>
+          <div v-for="s in dashboardServices" :key="s.id" class="p-3 bg-slate-50 rounded-lg text-xs mb-2 last:mb-0 flex items-center gap-3">
+            <div class="min-w-0 flex-1">
+              <p class="font-bold text-slate-700">{{ s.name }}</p>
+              <p class="text-slate-500 mt-0.5">{{ s.description }}</p>
+            </div>
+            <span class="shrink-0 px-2 py-1 rounded-md bg-purple-50 text-purple-600 text-[10px] font-bold">
+              Level {{ s.level }}
+            </span>
           </div>
         </div>
       </div>

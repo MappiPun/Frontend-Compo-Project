@@ -7,6 +7,7 @@ import UserDashboardView from '@/views/UserDashboardView.vue'
 import UserDetailView from '@/views/UserDetailView.vue'
 import ELearningView from '@/views/ELearningView.vue'
 import ExamView from '@/views/ExamView.vue'
+import ServiceView from '@/views/ServiceView.vue'
 import UserBadge from '@/components/UserBadge.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 
@@ -48,6 +49,12 @@ const router = createRouter({
       path: '/user/exam',
       name: 'user-exam',
       component: ExamView,
+      meta: { requiresAuth: true, role: 'user' }
+    },
+    {
+      path: '/user/services',
+      name: 'user-services',
+      component: ServiceView,
       meta: { requiresAuth: true, role: 'user' }
     },
     {

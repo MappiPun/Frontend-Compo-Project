@@ -111,7 +111,7 @@ const isAllAnswered = computed(() => {
     <UserProfileHeader />
     <UserNavigation />
 
-    <div class="max-w-4xl mx-auto space-y-6 mt-6">
+    <main class="max-w-5xl mx-auto bg-white rounded-2xl border border-slate-300 p-6 space-y-6 mt-6">
       
       <!-- หน้าต่างเลือกวิชา -->
       <div v-if="!selectedCourse" class="space-y-6">
@@ -227,6 +227,6 @@ const isAllAnswered = computed(() => {
         </button>
       </div>
 
-    </div>
+    </main>
   </div>
 </template>

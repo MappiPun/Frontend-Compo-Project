@@ -5,6 +5,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useUserStore, type Service } from '@/stores/user'
 import UserProfileHeader from '@/components/UserProfileHeader.vue'
 import UserNavigation from '@/components/UserNavigation.vue'
+import UserExamHistory from '@/components/UserExamHistory.vue'
 import level1Badge from '@/assets/badge/level1badge_icon.png'
 import level2Badge from '@/assets/badge/level2badge_icon.png'
 import level3Badge from '@/assets/badge/level3badge_icon.png'
@@ -31,6 +32,13 @@ const dashboardServices = computed(() => {
     .filter((service: Service & { level: number }) => service.level <= currentLevel)
     .sort((a: Service & { level: number }, b: Service & { level: number }) => a.level - b.level)
     .slice(-3)
+})
+
+const examHistory = computed(() => {
+  const user = userStore.users.find((u) => u.username === authStore.currentUser?.username)
+  return [...(user?.examHistory ?? [])].sort(
+    (a, b) => new Date(b.attemptedAt).getTime() - new Date(a.attemptedAt).getTime()
+  )
 })
 </script>
 
@@ -112,6 +120,12 @@ const dashboardServices = computed(() => {
           </div>
         </div>
       </div>
+      <UserExamHistory
+        :history="examHistory.slice(0, 3)"
+        title="Recent Exam History"
+        :show-view-all="true"
+        class="mt-6"
+      />
     </main>
   </div>
 </template>

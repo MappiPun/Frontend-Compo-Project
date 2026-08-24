@@ -1,18 +1,35 @@
 <script setup lang="ts">
 import type { ExamHistory } from '@/types'
+import { useRouter } from 'vue-router'
 
 withDefaults(defineProps<{
   history?: ExamHistory[]
+  title?: string
+  showViewAll?: boolean
 }>(), {
-  history: () => []
+  history: () => [],
+  title: 'Exam History',
+  showViewAll: false
 })
+
+const router = useRouter()
 </script>
 
 <template>
   <section class="bg-white rounded-2xl border border-slate-300 p-6 shadow-sm">
-    <div class="mb-6">
-      <h2 class="text-xl font-extrabold text-slate-900">Exam History</h2>
-      <p class="text-xs text-slate-400 mt-1">A record of your completed level exams.</p>
+    <div class="mb-6 flex items-start justify-between gap-4">
+      <div>
+        <h2 class="text-xl font-extrabold text-slate-900">{{ title }}</h2>
+        <p class="text-xs text-slate-400 mt-1">A record of your completed level exams.</p>
+      </div>
+      <button
+        v-if="showViewAll"
+        type="button"
+        class="shrink-0 text-xs font-semibold text-purple-600 hover:text-purple-700"
+        @click="router.push('/users/profile/history')"
+      >
+        View Full Exam History
+      </button>
     </div>
 
     <div v-if="history.length === 0" class="border border-slate-200 rounded-xl py-10 text-center">

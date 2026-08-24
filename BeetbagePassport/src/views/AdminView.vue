@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import AdminProfileHeader from '@/components/AdminProfileHeader.vue'
-import AdminNavigation from '@/components/AdminNavigation.vue'
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
@@ -24,18 +23,6 @@ const route = useRoute()
 const router = useRouter()
 
 const activeTab = ref<'users' | 'levels' | 'elearning'>('users')
-
-watch(
-  () => route.query.tab,
-  (tab) => {
-    if (tab === 'users' || tab === 'levels' || tab === 'elearning') {
-      activeTab.value = tab
-    } else {
-      activeTab.value = 'users'
-    }
-  },
-  { immediate: true }
-)
 const pageSize = 4
 const currentPage = ref(Number(route.query.page) || 1)
 
@@ -47,11 +34,6 @@ const newTitle = ref('')
 const newDescription = ref('')
 const newLevel = ref(1)
 const newVideoUrl = ref('')
-const editingELearningId = ref<string | null>(null)
-const editTitle = ref('')
-const editDescription = ref('')
-const editLevel = ref(1)
-const editVideoUrl = ref('')
 
 const levelsList = [1, 2, 3, 4]
 const levelsData = ref<LevelData[]>([])
@@ -162,36 +144,6 @@ async function handleAddELearning() {
   newLevel.value = 1
   newVideoUrl.value = ''
 }
-
-function startEditingELearning(item: { id: string; title: string; description: string; level: number; videoUrl: string }) {
-  editingELearningId.value = item.id
-  editTitle.value = item.title
-  editDescription.value = item.description
-  editLevel.value = item.level
-  editVideoUrl.value = item.videoUrl
-}
-
-function cancelEditingELearning() {
-  editingELearningId.value = null
-}
-
-async function saveELearningEdit() {
-  if (!editingELearningId.value || !editTitle.value || !editVideoUrl.value) return
-
-  let embedUrl = editVideoUrl.value
-  const match = embedUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/)
-  if (match && match[1]) {
-    embedUrl = `https://www.youtube.com/embed/${match[1]}`
-  }
-
-  await elearningStore.updateContent(editingELearningId.value, {
-    title: editTitle.value,
-    description: editDescription.value,
-    level: Number(editLevel.value),
-    videoUrl: embedUrl
-  })
-  editingELearningId.value = null
-}
 </script>
 
 <template>
@@ -199,9 +151,37 @@ async function saveELearningEdit() {
     <AdminProfileHeader />
 
     <main class="max-w-6xl mx-auto p-6 space-y-6">
-      <AdminNavigation />
+      <div class="flex border-b border-slate-200 space-x-4">
+        <button
+          @click="activeTab = 'users'"
+          :class="[
+            'pb-2 px-1 text-sm font-semibold transition-colors',
+            activeTab === 'users' ? 'border-b-2 border-purple-600 text-purple-600' : 'text-slate-500 hover:text-slate-700'
+          ]"
+        >
+          User Management
+        </button>
+        <button
+          @click="activeTab = 'levels'"
+          :class="[
+            'pb-2 px-1 text-sm font-semibold transition-colors',
+            activeTab === 'levels' ? 'border-b-2 border-purple-600 text-purple-600' : 'text-slate-500 hover:text-slate-700'
+          ]"
+        >
+          Levels & Exam Criteria
+        </button>
+        <button
+          @click="activeTab = 'elearning'"
+          :class="[
+            'pb-2 px-1 text-sm font-semibold transition-colors',
+            activeTab === 'elearning' ? 'border-b-2 border-purple-600 text-purple-600' : 'text-slate-500 hover:text-slate-700'
+          ]"
+        >
+          eLearning Management
+        </button>
+      </div>
 
-      <div v-if="activeTab === 'users'" class="bg-white rounded-2xl border border-slate-300 p-6 space-y-6">
+      <div v-if="activeTab === 'users'" class="space-y-6">
         <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label class="block text-xs font-semibold text-slate-500 mb-1">Search User</label>
@@ -316,8 +296,8 @@ async function saveELearningEdit() {
         </div>
       </div>
 
-      <div v-else-if="activeTab === 'elearning'" class="bg-white p-6 rounded-2xl border border-slate-300 shadow-sm space-y-6">
-        <div class="bg-white p-6 rounded-xl border border-slate-200 space-y-4">
+      <div v-else-if="activeTab === 'elearning'" class="space-y-6">
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
           <h2 class="text-base font-bold text-slate-800">Add New eLearning Video</h2>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -368,50 +348,25 @@ async function saveELearningEdit() {
           </button>
         </div>
 
-        <div class="bg-white p-6 rounded-xl border border-slate-200 space-y-4">
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
           <h2 class="text-base font-bold text-slate-800">Existing eLearning Contents</h2>
           <div v-if="elearningStore.contents.length > 0" class="space-y-3">
             <div
               v-for="item in elearningStore.contents"
               :key="item.id"
-              class="p-4 border border-slate-200 rounded-lg bg-slate-50"
+              class="flex items-center justify-between p-4 border border-slate-200 rounded-lg bg-slate-50"
             >
-              <div v-if="editingELearningId !== item.id" class="flex items-center justify-between gap-4">
-                <div>
-                  <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-purple-100 text-purple-800">Level {{ item.level }}</span>
-                  <h3 class="text-xs font-bold text-slate-800 mt-1">{{ item.title }}</h3>
-                  <p class="text-[11px] text-slate-500">{{ item.description }}</p>
-                </div>
-                <div class="flex items-center gap-3 shrink-0">
-                  <button
-                    @click="startEditingELearning(item)"
-                    class="text-xs text-purple-600 font-semibold hover:underline"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    @click="elearningStore.deleteContent(item.id)"
-                    class="text-xs text-red-600 font-semibold hover:underline"
-                  >
-                    Delete
-                  </button>
-                </div>
+              <div>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-purple-100 text-purple-800">Level {{ item.level }}</span>
+                <h3 class="text-xs font-bold text-slate-800 mt-1">{{ item.title }}</h3>
+                <p class="text-[11px] text-slate-500">{{ item.description }}</p>
               </div>
-
-              <div v-else class="space-y-3">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <input v-model="editTitle" type="text" placeholder="Video Title..." class="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs" />
-                  <select v-model="editLevel" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs">
-                    <option v-for="level in 4" :key="level" :value="level">Level {{ level }}</option>
-                  </select>
-                </div>
-                <input v-model="editVideoUrl" type="text" placeholder="YouTube URL..." class="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs" />
-                <textarea v-model="editDescription" rows="2" placeholder="Description..." class="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs"></textarea>
-                <div class="flex gap-2">
-                  <button @click="saveELearningEdit" class="px-3 py-2 bg-purple-600 text-white text-xs font-bold rounded-lg hover:bg-purple-700">Save</button>
-                  <button @click="cancelEditingELearning" class="px-3 py-2 bg-slate-100 text-slate-600 text-xs font-bold rounded-lg hover:bg-slate-200">Cancel</button>
-                </div>
-              </div>
+              <button
+                @click="elearningStore.deleteContent(item.id)"
+                class="text-xs text-red-600 font-semibold hover:underline"
+              >
+                Delete
+              </button>
             </div>
           </div>
           <div v-else class="text-center py-6 text-slate-400 text-xs">

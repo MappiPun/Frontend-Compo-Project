@@ -2,6 +2,10 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import AdminProfileHeader from '@/components/AdminProfileHeader.vue'
+<<<<<<< HEAD
+=======
+import AdminNavigation from '@/components/AdminNavigation.vue'
+>>>>>>> 52efccdae5face0a835120ee71438b3cb28218ba
 import axios from 'axios'
 
 interface Question {

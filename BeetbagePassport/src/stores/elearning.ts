@@ -42,5 +42,19 @@ export const useELearningStore = defineStore('elearning', () => {
     }
   }
 
+<<<<<<< HEAD
   return { contents, fetchContents, addContent, deleteContent }
+=======
+  async function updateContent(id: string, content: Omit<ELearningContent, 'id'>) {
+    try {
+      const res = await axios.put<ELearningContent>(`${API_URL}/${id}`, content)
+      const index = contents.value.findIndex((item) => item.id === id)
+      if (index !== -1) contents.value[index] = res.data
+    } catch (err) {
+      console.error('Failed to update elearning content:', err)
+    }
+  }
+
+  return { contents, fetchContents, addContent, updateContent, deleteContent }
+>>>>>>> 52efccdae5face0a835120ee71438b3cb28218ba
 })

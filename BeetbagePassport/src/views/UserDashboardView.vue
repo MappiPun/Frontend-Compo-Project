@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useUserStore, type Service } from '@/stores/user'
@@ -14,6 +14,13 @@ import level4Badge from '@/assets/badge/level4badge_icon.png'
 const authStore = useAuthStore()
 const userStore = useUserStore()
 const router = useRouter()
+
+onMounted(async () => {
+  await Promise.all([
+    userStore.fetchUsers(),
+    userStore.fetchLevels()
+  ])
+})
 
 const currentLevelData = computed(() => {
   const user = userStore.users.find((u) => u.username === authStore.currentUser?.username)

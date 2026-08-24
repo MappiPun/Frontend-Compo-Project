@@ -1,8 +1,13 @@
 <script setup lang="ts">
 import type { ExamHistory } from '@/types'
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+import { useUserStore } from '@/stores/user'
 
-withDefaults(defineProps<{
+const router = useRouter()
+
+const props = withDefaults(defineProps<{
   history?: ExamHistory[]
   title?: string
   showViewAll?: boolean
@@ -11,8 +16,21 @@ withDefaults(defineProps<{
   title: 'Exam History',
   showViewAll: false
 })
+const authStore = useAuthStore()
+const userStore = useUserStore()
 
-const router = useRouter()
+const displayedHistory = computed(() => {
+  const history = props.history ?? (() => {
+    const currentUser = userStore.users.find(
+      (user) => user.username === authStore.currentUser?.username
+    )
+    return currentUser?.examHistory ?? []
+  })()
+
+  return [...history].sort(
+    (a, b) => new Date(b.attemptedAt).getTime() - new Date(a.attemptedAt).getTime()
+  )
+})
 </script>
 
 <template>
@@ -32,7 +50,7 @@ const router = useRouter()
       </button>
     </div>
 
-    <div v-if="history.length === 0" class="border border-slate-200 rounded-xl py-10 text-center">
+    <div v-if="displayedHistory.length === 0" class="border border-slate-200 rounded-xl py-10 text-center">
       <p class="text-sm font-semibold text-slate-500">No exam history recorded yet.</p>
       <p class="text-xs text-slate-400 mt-1">Your completed exams will appear here.</p>
     </div>
@@ -46,7 +64,7 @@ const router = useRouter()
       </div>
 
       <div
-        v-for="item in history"
+        v-for="item in displayedHistory"
         :key="item.id"
         class="grid grid-cols-[1fr_1.5fr_1fr_1fr] items-center px-5 py-4 text-xs border-b border-slate-100 last:border-b-0"
       >

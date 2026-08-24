@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useUserStore } from '@/stores/user'
 import type { User } from '@/types'
@@ -14,6 +14,13 @@ const props = defineProps<{
 
 const authStore = useAuthStore()
 const userStore = useUserStore()
+
+onMounted(async () => {
+  await Promise.all([
+    userStore.fetchUsers(),
+    userStore.fetchLevels()
+  ])
+})
 
 const badgeAssets: Record<number, string> = {
   1: level1Badge,

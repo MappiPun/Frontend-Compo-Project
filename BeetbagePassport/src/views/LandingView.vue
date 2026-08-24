@@ -13,7 +13,7 @@ const isLoading = ref(false)
 
 async function handleLogin() {
   if (!username.value.trim()) {
-    errorMsg.value = "Error: this account [has been deactivated/doesn't exist]"
+    errorMsg.value = "Error: This account doesn't exist."
     return
   }
 
@@ -27,15 +27,17 @@ async function handleLogin() {
       await authStore.login('admin')
       router.push('/admin')
     } else {
-      const success = await authStore.login(trimmedUser)
-      if (success) {
+      const result = await authStore.login(trimmedUser)
+      if (result.success) {
         router.push('/users/profile')
+      } else if (result.reason === 'deactivated') {
+        errorMsg.value = 'Error: This account has been deactivated. If you believe this is a mistake, contact us via email.'
       } else {
-        errorMsg.value = "Error: this account [has been deactivated/doesn't exist]"
+        errorMsg.value = "Error: This account doesn't exist."
       }
     }
   } catch {
-    errorMsg.value = "Error: this account [has been deactivated/doesn't exist]"
+    errorMsg.value = "Error: This account doesn't exist."
   } finally {
     isLoading.value = false
   }
@@ -55,7 +57,7 @@ function quickLogin(user: string) {
         <span class="text-2xl font-black text-slate-900 tracking-tight">CAMT <span class="text-purple-600">Passport</span></span>
       </div>
       <a href="#login-card" class="text-sm font-semibold text-purple-600 hover:text-purple-800 transition">
-        Sign In →
+        
       </a>
     </header>
 

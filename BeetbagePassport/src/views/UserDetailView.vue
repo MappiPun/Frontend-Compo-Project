@@ -5,6 +5,7 @@ import { useAuthStore } from '@/stores/auth'
 import UserProfileHeader from '@/components/UserProfileHeader.vue'
 import AdminProfileHeader from '@/components/AdminProfileHeader.vue'
 import UserNavigation from '@/components/UserNavigation.vue'
+import AdminNavigation from '@/components/AdminNavigation.vue'
 import { apiClient } from '@/services/api'
 import type { User } from '@/types'
 
@@ -36,9 +37,12 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-slate-50 p-6">
+  <div class="min-h-screen bg-slate-100 p-6">
     <!-- Header สลับตาม Role -->
     <AdminProfileHeader v-if="isAdmin" />
+    <div v-if="isAdmin" class="max-w-5xl mx-auto mt-6">
+      <AdminNavigation />
+    </div>
     <template v-else>
       <UserProfileHeader />
       <UserNavigation />
@@ -59,7 +63,7 @@ onMounted(async () => {
           :to="isAdmin && targetId ? `/admin/users/${targetId}/info` : '/users/profile'" 
           :class="[
             'px-4 py-2 text-xs font-semibold rounded-lg transition',
-            route.name === 'user-detail' || route.name === 'admin-user-info'
+            route.name === 'user-detail' || route.name === 'admin-user-detail-info'
               ? 'bg-purple-600 text-white shadow-sm' 
               : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100'
           ]"
@@ -70,7 +74,7 @@ onMounted(async () => {
           :to="isAdmin && targetId ? `/admin/users/${targetId}/history` : '/users/profile/history'" 
           :class="[
             'px-4 py-2 text-xs font-semibold rounded-lg transition',
-            route.name === 'user-detail-history' || route.name === 'admin-user-history'
+            route.name === 'user-detail-history' || route.name === 'admin-user-detail-history'
               ? 'bg-purple-600 text-white shadow-sm' 
               : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100'
           ]"
@@ -81,7 +85,7 @@ onMounted(async () => {
           :to="isAdmin && targetId ? `/admin/users/${targetId}/badges` : '/users/profile/badges'" 
           :class="[
             'px-4 py-2 text-xs font-semibold rounded-lg transition',
-            route.name === 'user-detail-badges' || route.name === 'admin-user-badges'
+            route.name === 'user-detail-badges' || route.name === 'admin-user-detail-badges'
               ? 'bg-purple-600 text-white shadow-sm' 
               : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100'
           ]"

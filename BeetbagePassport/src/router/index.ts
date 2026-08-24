@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
-import LoginView from '@/views/LoginView.vue'
+import LandingView from '@/views/LandingView.vue'
 import AdminView from '@/views/AdminView.vue'
 import UserDashboardView from '@/views/UserDashboardView.vue'
 import UserDetailView from '@/views/UserDetailView.vue'
@@ -19,12 +19,12 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: '/login'
+      name: 'landing',
+      component: LandingView
     },
     {
       path: '/login',
-      name: 'login',
-      component: LoginView
+      redirect: '/'
     },
     {
       path: '/admin',
@@ -85,16 +85,15 @@ const router = createRouter({
   ]
 })
 
-// Navigation Guard
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
   const user = authStore.currentUser
 
   if (to.meta.requiresAuth && !user) {
-    return next({ name: 'login' })
+    return next({ name: 'landing' })
   }
 
-  if (to.name === 'login' && user) {
+  if (to.name === 'landing' && user) {
     if (!user.name || !user.surname) {
       return next({ name: 'user-detail-edit' })
     }

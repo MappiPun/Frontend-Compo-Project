@@ -117,19 +117,37 @@ export const useUserStore = defineStore('user', () => {
     totalQuestions: number,
     passed: boolean
   ) {
+    if (users.value.length === 0) {
+      await fetchUsers()
+    }
+
     const user = users.value.find((u) => u.username === username)
     if (user) {
       if (!user.examHistory) user.examHistory = []
-      user.examHistory.push({
-        id: Date.now().toString(),
+      
+      const newHistory = {
+        id: `h-${Date.now()}`,
         level,
         attemptedAt: new Date().toISOString(),
         score,
         totalQuestions,
         passed
-      })
+      }
+
+      user.examHistory.push(newHistory)
+
       if (passed && (user.level ?? 1) <= level) {
         user.level = level + 1
+      }
+
+      // ส่ง API ไปอัปเดตข้อมูลที่ db.json
+      try {
+        await apiClient.patch(`/users/${user.id}`, {
+          examHistory: user.examHistory,
+          level: user.level
+        })
+      } catch (error) {
+        console.error('Failed to update user exam history on backend:', error)
       }
     }
   }

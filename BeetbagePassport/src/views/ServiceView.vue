@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useUserStore } from '@/stores/user'
@@ -14,9 +14,14 @@ const authStore = useAuthStore()
 const userStore = useUserStore()
 const router = useRouter()
 
+onMounted(async () => {
+  if (typeof userStore.fetchUsers === 'function') await userStore.fetchUsers()
+  if (typeof userStore.fetchLevels === 'function') await userStore.fetchLevels()
+})
+
 const currentLevelData = computed(() => {
-  const user = userStore.users.find((u) => u.username === authStore.currentUser?.username)
-  const level = Math.min(Math.max(user?.level ?? 1, 1), 4)
+  const user = userStore.users.find((u) => u.username === authStore.currentUser?.username) || authStore.currentUser
+  const level = Math.min(Math.max(user?.level ?? user?.currentLevel ?? 1, 1), 4)
   return userStore.getLevelDetail(level)
 })
 
@@ -33,7 +38,7 @@ const allServices = computed(() => {
 
 const currentPage = ref(1)
 const servicesPerPage = 3
-const totalPages = computed(() => Math.ceil(allServices.value.length / servicesPerPage))
+const totalPages = computed(() => Math.ceil(allServices.value.length / servicesPerPage) || 1)
 const paginatedServices = computed(() => {
   const start = (currentPage.value - 1) * servicesPerPage
   return allServices.value.slice(start, start + servicesPerPage)
@@ -68,10 +73,10 @@ watch(totalPages, (pages) => {
         <div class="flex items-center justify-between gap-4 mb-5">
           <div>
             <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Current Level</p>
-            <h2 class="text-xl font-extrabold text-purple-600 mt-1">{{ currentLevelData?.title }}</h2>
+            <h2 class="text-xl font-extrabold text-purple-600 mt-1">{{ currentLevelData?.title || 'Level 1 Passport' }}</h2>
           </div>
           <span class="px-3 py-1 rounded-full bg-purple-50 text-purple-600 text-xs font-bold">
-            Level {{ currentLevelData?.level }}
+            Level {{ currentLevelData?.level ?? 1 }}
           </span>
         </div>
 

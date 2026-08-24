@@ -140,10 +140,19 @@
       "phonenumber": "0817107779",
       "province": "Bangkok",
       "role": "user",
-      "level": 1,
+      "level": 2,
       "isActive": true,
       "profileImage": "https://api.dicebear.com/7.x/bottts/svg?seed=map2",
-      "examHistory": [],
+      "examHistory": [
+        {
+          "id": "h-1787575219366",
+          "level": 1,
+          "score": 2,
+          "totalQuestions": 3,
+          "passed": true,
+          "attemptedAt": "2026-08-24T12:40:19.366Z"
+        }
+      ],
       "id": "UB--aj8Np0U"
     }
   ],
@@ -339,6 +348,18 @@
         "Photoshop",
         "Nginx",
         "Vite"
+      ],
+      "correctAnswer": 0
+    },
+    {
+      "id": "TfkZofIQIR4",
+      "level": 1,
+      "questionText": "ุึ67",
+      "options": [
+        "six seven",
+        "Hok Jed",
+        "SIX SEVEN",
+        "จกเห็ด"
       ],
       "correctAnswer": 0
     }

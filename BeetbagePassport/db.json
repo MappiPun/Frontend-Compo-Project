@@ -38,7 +38,7 @@
       "profileImage": "https://api.dicebear.com/7.x/bottts/svg?seed=Maneenat",
       "level": 2,
       "isActive": true,
-      "province": "Bangkok",
+      "province": "Had Yai",
       "examHistory": [
         {
           "id": "eh-1",
@@ -154,7 +154,7 @@
       "surname": "Pon",
       "email": "papon@example",
       "phonenumber": "0817107779",
-      "province": "Bangkok",
+      "province": "Roi Aed",
       "role": "user",
       "level": 1,
       "isActive": true,

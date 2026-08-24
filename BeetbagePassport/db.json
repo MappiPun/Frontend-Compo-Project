@@ -25,48 +25,6 @@
       "level": 2,
       "isActive": true,
       "province": "Chiang Mai",
-      "examHistory": [
-        {
-          "id": "h-1787578273936",
-          "level": 1,
-          "attemptedAt": "2026-08-24T13:31:13.936Z",
-          "score": 1,
-          "totalQuestions": 2,
-          "passed": false
-        },
-        {
-          "id": "h-1787578278812",
-          "level": 1,
-          "attemptedAt": "2026-08-24T13:31:18.812Z",
-          "score": 1,
-          "totalQuestions": 2,
-          "passed": false
-        },
-        {
-          "id": "h-1787578561429",
-          "level": 1,
-          "attemptedAt": "2026-08-24T13:36:01.429Z",
-          "score": 1,
-          "totalQuestions": 2,
-          "passed": false
-        },
-        {
-          "id": "h-1787578571560",
-          "level": 1,
-          "attemptedAt": "2026-08-24T13:36:11.560Z",
-          "score": 2,
-          "totalQuestions": 2,
-          "passed": true
-        },
-        {
-          "id": "h-1787578583613",
-          "level": 1,
-          "attemptedAt": "2026-08-24T13:36:23.613Z",
-          "score": 2,
-          "totalQuestions": 2,
-          "passed": true
-        }
-      ],
       "id": "Bj9GXX8xneE"
     },
     {

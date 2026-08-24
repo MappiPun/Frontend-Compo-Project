@@ -3,6 +3,7 @@ import AdminProfileHeader from '@/components/AdminProfileHeader.vue'
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
+import { useELearningStore } from '@/stores/elearning'
 import UserCard from '@/components/UserCard.vue'
 import { apiClient } from '@/services/api'
 import axios from 'axios'
@@ -17,16 +18,22 @@ interface LevelData {
 }
 
 const userStore = useUserStore()
+const elearningStore = useELearningStore()
 const route = useRoute()
 const router = useRouter()
 
-const activeTab = ref<'users' | 'levels'>('users')
+const activeTab = ref<'users' | 'levels' | 'elearning'>('users')
 const pageSize = 4
 const currentPage = ref(Number(route.query.page) || 1)
 
 const searchQuery = ref('')
 const selectedProvince = ref('')
 const selectedLevel = ref<number | string>('')
+
+const newTitle = ref('')
+const newDescription = ref('')
+const newLevel = ref(1)
+const newVideoUrl = ref('')
 
 const levelsList = [1, 2, 3, 4]
 const levelsData = ref<LevelData[]>([])
@@ -114,6 +121,28 @@ async function handleDeleteUser(userId: string | number) {
     alert('Failed to delete user.')
   }
 }
+
+function handleAddELearning() {
+  if (!newTitle.value || !newVideoUrl.value) return
+
+  let embedUrl = newVideoUrl.value
+  const match = embedUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/)
+  if (match && match[1]) {
+    embedUrl = `https://www.youtube.com/embed/${match[1]}`
+  }
+
+  elearningStore.addContent({
+    title: newTitle.value,
+    description: newDescription.value,
+    level: Number(newLevel.value),
+    videoUrl: embedUrl
+  })
+
+  newTitle.value = ''
+  newDescription.value = ''
+  newLevel.value = 1
+  newVideoUrl.value = ''
+}
 </script>
 
 <template>
@@ -139,6 +168,15 @@ async function handleDeleteUser(userId: string | number) {
           ]"
         >
           Levels & Exam Criteria
+        </button>
+        <button
+          @click="activeTab = 'elearning'"
+          :class="[
+            'pb-2 px-1 text-sm font-semibold transition-colors',
+            activeTab === 'elearning' ? 'border-b-2 border-purple-600 text-purple-600' : 'text-slate-500 hover:text-slate-700'
+          ]"
+        >
+          eLearning Management
         </button>
       </div>
 
@@ -219,7 +257,7 @@ async function handleDeleteUser(userId: string | number) {
         </div>
       </div>
 
-      <div v-else class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+      <div v-else-if="activeTab === 'levels'" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
         <h2 class="text-base font-bold text-slate-800">Level Criteria & Benefits Management</h2>
         <p class="text-xs text-slate-500">Configure level passing criteria, questions, and view benefits/services for each level.</p>
         
@@ -253,6 +291,85 @@ async function handleDeleteUser(userId: string | number) {
             >
               Manage Level {{ lvlData.level }} &rarr;
             </router-link>
+          </div>
+        </div>
+      </div>
+
+      <div v-else-if="activeTab === 'elearning'" class="space-y-6">
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+          <h2 class="text-base font-bold text-slate-800">Add New eLearning Video</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 mb-1">Title</label>
+              <input
+                v-model="newTitle"
+                type="text"
+                placeholder="Video Title..."
+                class="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 mb-1">Target Level</label>
+              <select
+                v-model="newLevel"
+                class="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-purple-500"
+              >
+                <option :value="1">Level 1</option>
+                <option :value="2">Level 2</option>
+                <option :value="3">Level 3</option>
+                <option :value="4">Level 4</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 mb-1">YouTube URL</label>
+            <input
+              v-model="newVideoUrl"
+              type="text"
+              placeholder="https://www.youtube.com/watch?v=..."
+              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 mb-1">Description</label>
+            <textarea
+              v-model="newDescription"
+              rows="3"
+              placeholder="Description..."
+              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-purple-500"
+            ></textarea>
+          </div>
+          <button
+            @click="handleAddELearning"
+            class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold rounded-lg transition"
+          >
+            + Add Content
+          </button>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+          <h2 class="text-base font-bold text-slate-800">Existing eLearning Contents</h2>
+          <div v-if="elearningStore.contents.length > 0" class="space-y-3">
+            <div
+              v-for="item in elearningStore.contents"
+              :key="item.id"
+              class="flex items-center justify-between p-4 border border-slate-200 rounded-lg bg-slate-50"
+            >
+              <div>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-purple-100 text-purple-800">Level {{ item.level }}</span>
+                <h3 class="text-xs font-bold text-slate-800 mt-1">{{ item.title }}</h3>
+                <p class="text-[11px] text-slate-500">{{ item.description }}</p>
+              </div>
+              <button
+                @click="elearningStore.deleteContent(item.id)"
+                class="text-xs text-red-600 font-semibold hover:underline"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+          <div v-else class="text-center py-6 text-slate-400 text-xs">
+            No content added yet.
           </div>
         </div>
       </div>

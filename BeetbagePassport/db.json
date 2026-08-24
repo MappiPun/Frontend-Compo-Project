@@ -88,7 +88,7 @@
       "surname": "Prakarn",
       "profileImage": "https://api.dicebear.com/7.x/bottts/svg?seed=Niran",
       "level": 1,
-      "isActive": false,
+      "isActive": true,
       "province": "Chiang Mai",
       "examHistory": [],
       "id": "KYQu12RDLXg"
@@ -126,6 +126,14 @@
           "totalQuestions": 2,
           "passed": false,
           "attemptedAt": "2026-08-24T12:27:38.884Z"
+        },
+        {
+          "id": "h-1787580564782",
+          "level": 4,
+          "attemptedAt": "2026-08-24T14:09:24.782Z",
+          "score": 1,
+          "totalQuestions": 1,
+          "passed": false
         }
       ],
       "phone": "0888852191",
@@ -153,29 +161,6 @@
         }
       ],
       "id": "UB--aj8Np0U"
-    },
-    {
-      "username": "Kira",
-      "name": "Kira",
-      "surname": "Kira",
-      "email": "iamappipun@gmail.com",
-      "phonenumber": "1111111111",
-      "province": "Bangkok",
-      "role": "user",
-      "level": 2,
-      "isActive": true,
-      "profileImage": "https://api.dicebear.com/7.x/bottts/svg?seed=Kira",
-      "examHistory": [
-        {
-          "id": "h-1787580173242",
-          "level": 1,
-          "attemptedAt": "2026-08-24T14:02:53.242Z",
-          "score": 2,
-          "totalQuestions": 2,
-          "passed": true
-        }
-      ],
-      "id": "pd3TnXvrkXc"
     }
   ],
   "levels": [
@@ -275,7 +260,7 @@
       "id": "4",
       "level": 4,
       "title": "Expert Passport",
-      "passScore": 1,
+      "passScore": 2,
       "benefits": [
         {
           "id": "b4-1",
@@ -388,32 +373,25 @@
   ],
   "elearning": [
     {
+      "id": "1",
       "title": "Introduction to Core Foundations",
       "description": "บทเรียนพื้นฐานสำหรับผู้เริ่มต้น Level 1",
       "level": 1,
-      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-      "id": "1"
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ"
     },
     {
       "title": "SPIN",
-      "description": "Screw everything, let's just spin endlessly!",
+      "description": "HOW TO SPIN",
       "level": 2,
       "videoUrl": "https://www.youtube.com/embed/Soy4jGPHr3g",
       "id": "8wkBbykRoVg"
     },
     {
-      "title": "F O R G E T   E V E R Y T H I N G",
-      "description": "Do it.",
-      "level": 4,
-      "videoUrl": "https://www.youtube.com/embed/wJWksPWDKOc",
-      "id": "yyrisGEw1OI"
-    },
-    {
-      "title": "Immerse yourself.",
-      "description": "You must memorize the entirety of Bee Movie's script. Do it.",
-      "level": 3,
-      "videoUrl": "https://www.youtube.com/embed/QsGYNfagHlU",
-      "id": "lEdFlV8hoI0"
+      "title": "HOW",
+      "description": "IDK",
+      "level": 1,
+      "videoUrl": "https://www.youtube.com/embed/LLjfal8jCYI",
+      "id": "bCDjYPeR7_s"
     }
   ],
   "keyName": [],

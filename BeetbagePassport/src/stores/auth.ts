@@ -34,19 +34,14 @@ export const useAuthStore = defineStore('auth', () => {
       const response = await apiClient.get<User[]>(`/users?username=${trimmed}`)
       const user = response.data[0]
 
-      if (!user) {
-        return { success: false, reason: 'not-found' as const }
+      if (user && user.isActive) {
+        setUser(user) 
+        return true
       }
-
-      if (!user.isActive) {
-        return { success: false, reason: 'deactivated' as const }
-      }
-
-      setUser(user)
-      return { success: true, reason: null }
+      return false
     } catch (error) {
       console.error('Login error:', error)
-      return { success: false, reason: 'not-found' as const }
+      return false
     }
   }
 

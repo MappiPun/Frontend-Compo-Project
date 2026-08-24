@@ -67,6 +67,11 @@ const router = createRouter({
           path: 'badges',
           name: 'admin-user-detail-badges',
           component: UserBadge
+        },
+        {
+          path: 'edit',
+          name: 'admin-user-detail-edit',
+          component: UserEdit
         }
       ]
     },

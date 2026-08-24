@@ -1,104 +1,151 @@
 import { defineStore } from 'pinia'
-import { useAuthStore } from './auth'
-import { ref } from 'vue'
-import type { User, LevelDetail, Question, ExamHistory } from '@/types'
+import { ref, computed } from 'vue'
 import { apiClient } from '@/services/api'
+
+export interface Benefit {
+  id: string
+  description: string
+}
+
+export interface Service {
+  id: string
+  name: string
+  description: string
+}
+
+export interface Level {
+  id: string
+  level: number
+  title: string
+  passScore: number
+  description?: string
+  benefits: Benefit[]
+  services: Service[]
+}
+
+export interface Question {
+  id: string
+  level: number
+  questionText: string
+  options: string[]
+  correctAnswer: number
+}
+
+export interface User {
+  id?: string
+  username: string
+  name: string
+  surname: string
+  email?: string
+  phonenumber?: string
+  phone?: string
+  province?: string
+  level?: number
+  currentLevel?: number
+  role?: string
+  isActive?: boolean
+  profileImage?: string
+  examHistory?: Array<{
+    id: string
+    level: number
+    attemptedAt: string
+    score: number
+    totalQuestions: number
+    passed: boolean
+  }>
+}
 
 export const useUserStore = defineStore('user', () => {
   const users = ref<User[]>([])
-  const levels = ref<LevelDetail[]>([])
+  const levels = ref<Level[]>([])
   const questions = ref<Question[]>([])
+  const selectedUserId = ref<string | null>(null)
 
-  async function fetchData() {
+  const selectedUser = computed(() => {
+    if (!selectedUserId.value) return null
+    return users.value.find(
+      (u) => u.id === selectedUserId.value || u.username === selectedUserId.value
+    ) || null
+  })
+
+  async function fetchUsers() {
     try {
-      const [usersResponse, levelsResponse, questionsResponse] = await Promise.all([
-        apiClient.get<User[]>('/users'),
-        apiClient.get<LevelDetail[]>('/levels'),
-        apiClient.get<Question[]>('/questions')
-      ])
-      users.value = usersResponse.data
-      levels.value = levelsResponse.data
-      questions.value = questionsResponse.data
+      const response = await apiClient.get('/users')
+      users.value = response.data
     } catch (error) {
-      console.error('Fetch user data error:', error)
+      console.error('Failed to fetch users:', error)
     }
   }
 
-  function getUserById(id: string) {
-    return users.value.find((u: User) => u.id === id)
-  }
-
-  async function toggleUserStatus(username: string) {
-    const target = users.value.find((u: User) => u.username === username)
-    if (target) {
-      const response = await apiClient.patch<User>(`/users/${target.id}`, {
-        isActive: !target.isActive
-      })
-      Object.assign(target, response.data)
-    }
-  }
-
-  async function updateUserProfile(username: string, updatedData: Partial<User>) {
-    const target = users.value.find((u: User) => u.username === username)
-    if (target?.id) {
-      const response = await apiClient.patch<User>(`/users/${target.id}`, updatedData)
-      Object.assign(target, response.data)
-    }
-  }
-
-  async function recordExamResult(username: string, examLevel: number, score: number, total: number, passed: boolean) {
-    const target = users.value.find((u: User) => u.username === username)
-    if (!target?.id) return
-
-    const currentLvl = target.level ?? target.currentLevel ?? 1
-    const newHistory: ExamHistory = {
-      id: `h-${Date.now()}`,
-      level: examLevel,
-      score,
-      totalQuestions: total,
-      passed,
-      attemptedAt: new Date().toISOString()
-    }
-
-    const updatedHistory = [newHistory, ...(target.examHistory ?? [])]
-    const updatedLevel = passed && examLevel === currentLvl && currentLvl < 4
-      ? Math.min(currentLvl + 1, 4)
-      : currentLvl
-
+  async function fetchLevels() {
     try {
-      const response = await apiClient.patch<User>(`/users/${target.id}`, {
-        examHistory: updatedHistory,
-        level: updatedLevel
-      })
-
-      Object.assign(target, response.data)
-
-      // Keep the authenticated user's cached copy in sync immediately.
-      const authStore = useAuthStore()
-      if (authStore.currentUser?.id === response.data.id) {
-        authStore.setUser(response.data)
-      }
+      const response = await apiClient.get('/levels')
+      levels.value = response.data
     } catch (error) {
-      console.error('Record exam result error:', error)
-      throw error
+      console.error('Failed to fetch levels:', error)
+    }
+  }
+
+  async function fetchQuestions() {
+    try {
+      const response = await apiClient.get('/questions')
+      questions.value = response.data
+    } catch (error) {
+      console.error('Failed to fetch questions:', error)
     }
   }
 
   function getLevelDetail(levelNumber: number) {
-    return levels.value.find((l: LevelDetail) => l.level === levelNumber)
+    return levels.value.find((l) => l.level === levelNumber) || null
   }
 
-  fetchData()
+  function setSelectedUser(id: string) {
+    selectedUserId.value = id
+  }
+
+  function toggleUserStatus(userId: string | number) {
+    const user = users.value.find((u) => u.id === userId || u.username === userId)
+    if (user) {
+      user.isActive = !user.isActive
+    }
+  }
+
+  async function recordExamResult(
+    username: string,
+    level: number,
+    score: number,
+    totalQuestions: number,
+    passed: boolean
+  ) {
+    const user = users.value.find((u) => u.username === username)
+    if (user) {
+      if (!user.examHistory) user.examHistory = []
+      user.examHistory.push({
+        id: Date.now().toString(),
+        level,
+        attemptedAt: new Date().toISOString(),
+        score,
+        totalQuestions,
+        passed
+      })
+      if (passed && (user.level ?? 1) <= level) {
+        user.level = level + 1
+      }
+    }
+  }
 
   return {
     users,
     levels,
     questions,
-    fetchData,
-    getUserById,
+    selectedUserId,
+    selectedUser,
+    fetchUsers,
+    fetchLevels,
+    fetchQuestions,
+    getLevelDetail,
+    setSelectedUser,
     toggleUserStatus,
-    updateUserProfile,
-    recordExamResult,
-    getLevelDetail
+    recordExamResult
   }
 })

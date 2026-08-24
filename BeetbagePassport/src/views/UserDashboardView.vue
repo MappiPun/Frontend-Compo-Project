@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { useUserStore } from '@/stores/user'
+import { useUserStore, type Service } from '@/stores/user'
 import UserProfileHeader from '@/components/UserProfileHeader.vue'
 import UserNavigation from '@/components/UserNavigation.vue'
 import level1Badge from '@/assets/badge/level1badge_icon.png'
@@ -22,14 +22,14 @@ const currentLevelData = computed(() => {
 
 const dashboardServices = computed(() => {
   const currentLevel = currentLevelData.value?.level ?? 1
-  const services = [1, 2, 3, 4].flatMap((level) => {
-    const levelData = userStore.getLevelDetail(level)
-    return (levelData?.services ?? []).map((service) => ({ ...service, level }))
+  const services = [1, 2, 3, 4].flatMap((levelNum: number) => {
+    const levelData = userStore.getLevelDetail(levelNum)
+    return (levelData?.services ?? []).map((service: Service) => ({ ...service, level: levelNum }))
   })
 
   return services
-    .filter((service) => service.level <= currentLevel)
-    .sort((a, b) => a.level - b.level)
+    .filter((service: Service & { level: number }) => service.level <= currentLevel)
+    .sort((a: Service & { level: number }, b: Service & { level: number }) => a.level - b.level)
     .slice(-3)
 })
 </script>

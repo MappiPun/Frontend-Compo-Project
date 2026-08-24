@@ -1,10 +1,20 @@
 <script setup lang="ts">
 import AdminProfileHeader from '@/components/AdminProfileHeader.vue'
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import UserCard from '@/components/UserCard.vue'
 import { apiClient } from '@/services/api'
+import axios from 'axios'
+
+interface LevelData {
+  id: string
+  level: number
+  title: string
+  passScore: number
+  benefits: { id: string; description: string }[]
+  services: { id: string; name: string; description: string }[]
+}
 
 const userStore = useUserStore()
 const route = useRoute()
@@ -19,6 +29,27 @@ const selectedProvince = ref('')
 const selectedLevel = ref<number | string>('')
 
 const levelsList = [1, 2, 3, 4]
+const levelsData = ref<LevelData[]>([])
+
+const fetchUsers = async () => {
+  if (typeof userStore.fetchUsers === 'function') {
+    await userStore.fetchUsers()
+  }
+}
+
+const fetchLevels = async () => {
+  try {
+    const res = await axios.get('http://localhost:3000/levels')
+    levelsData.value = res.data
+  } catch (err) {
+    console.error('Failed to fetch levels:', err)
+  }
+}
+
+onMounted(() => {
+  fetchUsers()
+  fetchLevels()
+})
 
 watch(
   () => route.query.page,
@@ -44,7 +75,9 @@ const filteredUsers = computed(() => {
     const matchName = fullName.includes(searchQuery.value.toLowerCase()) || 
                       user.username.toLowerCase().includes(searchQuery.value.toLowerCase())
     const matchProvince = !selectedProvince.value || user.province === selectedProvince.value
-    const matchLevel = !selectedLevel.value || user.level === Number(selectedLevel.value)
+    
+    const userLevel = user.level ?? user.currentLevel
+    const matchLevel = !selectedLevel.value || userLevel === Number(selectedLevel.value)
     
     return matchName && matchProvince && matchLevel
   })
@@ -74,9 +107,7 @@ function goToUserDetail(userId: string | number) {
 async function handleDeleteUser(userId: string | number) {
   try {
     await apiClient.delete(`/users/${userId}`)
-    
     userStore.users = userStore.users.filter(u => u.id !== userId && u.username !== userId)
-
     alert('User deleted successfully.')
   } catch (error) {
     console.error('Delete user error:', error)
@@ -192,15 +223,35 @@ async function handleDeleteUser(userId: string | number) {
         <h2 class="text-base font-bold text-slate-800">Level Criteria & Benefits Management</h2>
         <p class="text-xs text-slate-500">Configure level passing criteria, questions, and view benefits/services for each level.</p>
         
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
-          <div v-for="level in levelsList" :key="level" class="p-4 border border-slate-200 rounded-lg space-y-2">
-            <div class="font-bold text-sm text-purple-700">Level {{ level }}</div>
-            <p class="text-xs text-slate-500">View services, benefits, and exam configuration.</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+          <div v-for="lvlData in levelsData" :key="lvlData.id" class="p-4 border border-slate-200 rounded-lg space-y-3 flex flex-col justify-between bg-slate-50">
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <span class="font-bold text-sm text-purple-700">Level {{ lvlData.level }}</span>
+                <span class="text-[10px] bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full font-semibold">Pass: {{ lvlData.passScore }} pts</span>
+              </div>
+              <h3 class="text-xs font-semibold text-slate-700 mb-2">{{ lvlData.title }}</h3>
+
+              <div class="space-y-1 mb-3">
+                <p class="text-[11px] font-bold text-slate-500">Benefits:</p>
+                <ul class="text-[11px] text-slate-600 list-disc list-inside space-y-0.5">
+                  <li v-for="b in lvlData.benefits" :key="b.id" class="truncate">{{ b.description }}</li>
+                </ul>
+              </div>
+
+              <div class="space-y-1">
+                <p class="text-[11px] font-bold text-slate-500">Services:</p>
+                <ul class="text-[11px] text-slate-600 list-disc list-inside space-y-0.5">
+                  <li v-for="s in lvlData.services" :key="s.id" class="truncate">{{ s.name }}</li>
+                </ul>
+              </div>
+            </div>
+
             <router-link 
-              :to="`/admin/levels/${level}`" 
-              class="inline-block text-xs font-semibold text-purple-600 hover:underline pt-2"
+              :to="`/admin/levels/${lvlData.level}`" 
+              class="inline-block text-xs font-semibold text-purple-600 hover:underline pt-2 border-t border-slate-200"
             >
-              Manage Level {{ level }} &rarr;
+              Manage Level {{ lvlData.level }} &rarr;
             </router-link>
           </div>
         </div>

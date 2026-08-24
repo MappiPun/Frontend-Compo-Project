@@ -13,6 +13,7 @@ const isUploading = ref(false)
 const isEditing = ref(false)
 
 const activeUser = computed(() => props.user || authStore.currentUser)
+const isAdmin = computed(() => authStore.isAdmin)
 
 const editForm = ref({
   name: '',
@@ -23,6 +24,7 @@ const editForm = ref({
 })
 
 function triggerFileInput() {
+  if (isAdmin.value) return
   fileInput.value?.click()
 }
 
@@ -63,6 +65,8 @@ function compressImage(file: File, maxWidth = 200, maxHeight = 200): Promise<str
 }
 
 async function handleFileUpload(event: Event) {
+  if (isAdmin.value) return
+  
   const target = event.target as HTMLInputElement
   const file = target.files?.[0]
   
@@ -119,7 +123,10 @@ async function saveProfileEdit() {
     <div class="flex flex-col items-center gap-3">
       <div 
         @click="triggerFileInput" 
-        class="relative w-44 h-44 bg-slate-300 rounded-full flex items-center justify-center text-white text-xl font-bold shadow-inner overflow-hidden cursor-pointer group border-2 border-slate-200"
+        :class="[
+          'relative w-44 h-44 bg-slate-300 rounded-full flex items-center justify-center text-white text-xl font-bold shadow-inner overflow-hidden border-2 border-slate-200',
+          !isAdmin ? 'cursor-pointer group' : ''
+        ]"
       >
         <img
           v-if="activeUser.profileImage"
@@ -129,12 +136,16 @@ async function saveProfileEdit() {
         />
         <span v-else class="text-slate-600 font-semibold text-sm">Profile pic</span>
 
-        <div class="absolute inset-0 bg-black/40 flex items-center justify-center text-white text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+        <div 
+          v-if="!isAdmin"
+          class="absolute inset-0 bg-black/40 flex items-center justify-center text-white text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity"
+        >
           {{ isUploading ? 'Uploading...' : 'Change Photo' }}
         </div>
       </div>
 
       <input 
+        v-if="!isAdmin"
         ref="fileInput" 
         type="file" 
         accept="image/*" 
@@ -143,6 +154,7 @@ async function saveProfileEdit() {
       />
 
       <button 
+        v-if="!isAdmin"
         @click="triggerFileInput" 
         :disabled="isUploading"
         type="button"

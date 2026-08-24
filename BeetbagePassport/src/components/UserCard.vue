@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { User } from '@/types'
+import type { User } from '@/stores/user'
 
 defineProps<{
   user: User
@@ -21,13 +21,13 @@ const emit = defineEmits<{
       <img :src="user.profileImage" :alt="user.name" class="w-12 h-12 rounded-full border border-gray-200" />
       <div class="flex-1">
         <h3 class="font-bold text-gray-800 text-base">{{ user.name }} {{ user.surname }}</h3>
-        <p class="text-xs text-gray-500">@{{ user.username }} • {{ user.email }}</p>
+        <p class="text-xs text-gray-500">@{{ user.username }} • {{ user.email ?? '-' }}</p>
         <div class="mt-2 flex items-center space-x-2">
           <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-indigo-50 text-indigo-600">
-            Level {{ user.level }}
+            Level {{ user.level ?? user.currentLevel ?? 1 }}
           </span>
           <span class="px-2 py-0.5 text-xs font-medium rounded-full bg-gray-100 text-gray-600">
-            {{ user.province }}
+            {{ user.province ?? '-' }}
           </span>
         </div>
       </div>

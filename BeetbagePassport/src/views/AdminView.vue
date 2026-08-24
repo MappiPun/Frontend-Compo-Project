@@ -17,6 +17,8 @@ const searchQuery = ref('')
 const selectedProvince = ref('')
 const selectedLevel = ref<number | string>('')
 
+const levelsList = [1, 2, 3, 4]
+
 watch(
   () => route.query.page,
   (newPage) => {
@@ -130,9 +132,9 @@ function goToUserDetail(userId: string | number) {
               class="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-purple-500"
             >
               <option value="">All Levels</option>
-              <option value="1">Level 1</option>
-              <option value="2">Level 2</option>
-              <option value="3">Level 3</option>
+              <option v-for="level in levelsList" :key="level" :value="level">
+                Level {{ level }}
+              </option>
             </select>
           </div>
         </div>
@@ -179,8 +181,8 @@ function goToUserDetail(userId: string | number) {
         <h2 class="text-base font-bold text-slate-800">Level Criteria & Benefits Management</h2>
         <p class="text-xs text-slate-500">Configure level passing criteria, questions, and view benefits/services for each level.</p>
         
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-          <div v-for="level in [1, 2, 3]" :key="level" class="p-4 border border-slate-200 rounded-lg space-y-2">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
+          <div v-for="level in levelsList" :key="level" class="p-4 border border-slate-200 rounded-lg space-y-2">
             <div class="font-bold text-sm text-purple-700">Level {{ level }}</div>
             <p class="text-xs text-slate-500">View services, benefits, and exam configuration.</p>
             <router-link 

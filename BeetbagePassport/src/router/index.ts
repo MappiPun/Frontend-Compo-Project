@@ -39,6 +39,25 @@ const router = createRouter({
       meta: { requiresAuth: true, role: 'admin' }
     },
     {
+      path: '/admin/levels/:id',
+      name: 'admin-level-detail',
+      component: () => import('@/views/AdminLevelDetailView.vue'),
+      meta: { requiresAuth: true, role: 'admin' }
+    },
+    {
+      path: '/admin/users/:id/info',
+      name: 'admin-user-detail',
+      component: UserDetailView,
+      meta: { requiresAuth: true, role: 'admin' },
+      children: [
+        {
+          path: '',
+          name: 'admin-user-detail-info',
+          component: UserDetailInfo
+        }
+      ]
+    },
+    {
       path: '/user',
       name: 'user-dashboard',
       component: UserDashboardView,

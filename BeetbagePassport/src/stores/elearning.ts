@@ -42,6 +42,9 @@ export const useELearningStore = defineStore('elearning', () => {
     }
   }
 
+<<<<<<< HEAD
+  return { contents, fetchContents, addContent, deleteContent }
+=======
   async function updateContent(id: string, content: Omit<ELearningContent, 'id'>) {
     try {
       const res = await axios.put<ELearningContent>(`${API_URL}/${id}`, content)
@@ -53,4 +56,5 @@ export const useELearningStore = defineStore('elearning', () => {
   }
 
   return { contents, fetchContents, addContent, updateContent, deleteContent }
+>>>>>>> 52efccdae5face0a835120ee71438b3cb28218ba
 })

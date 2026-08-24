@@ -2,7 +2,10 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import AdminProfileHeader from '@/components/AdminProfileHeader.vue'
+<<<<<<< HEAD
+=======
 import AdminNavigation from '@/components/AdminNavigation.vue'
+>>>>>>> 52efccdae5face0a835120ee71438b3cb28218ba
 import axios from 'axios'
 
 interface Question {
@@ -49,7 +52,7 @@ onMounted(() => {
 })
 
 function goBack() {
-  router.push('/admin?tab=levels')
+  router.push('/admin')
 }
 
 async function addQuestion() {
@@ -93,10 +96,6 @@ async function deleteQuestion(questionId: string) {
 }
 
 async function saveChanges() {
-  if (passScore.value > questions.value.length) {
-    passScore.value = questions.value.length
-  }
-
   try {
     await axios.patch(`http://localhost:3000/levels/${levelId.value}`, {
       passScore: Number(passScore.value)
@@ -113,14 +112,11 @@ async function saveChanges() {
 <template>
   <div class="min-h-screen bg-slate-50 p-6">
     <AdminProfileHeader />
-    <div class="max-w-5xl mx-auto mt-6">
-      <AdminNavigation />
-    </div>
 
-    <main class="max-w-5xl mx-auto p-6 space-y-6 bg-white rounded-xl border border-slate-200 shadow-sm mt-6">
+    <main class="max-w-4xl mx-auto p-6 space-y-6 bg-white rounded-xl border border-slate-200 shadow-sm mt-6">
       <div class="flex justify-between items-center border-b pb-4">
         <div>
-          <button @click="goBack" class="text-xs text-purple-600 hover:underline mb-1">&larr; Go back</button>
+          <button @click="goBack" class="text-xs text-purple-600 hover:underline mb-1">&larr; Back to Admin</button>
           <h1 class="text-lg font-bold text-slate-800">Manage Level {{ levelId }}</h1>
         </div>
         <button 
@@ -138,14 +134,11 @@ async function saveChanges() {
       <div v-else class="space-y-6">
         <div>
           <label class="block text-xs font-semibold text-slate-500 mb-1">Passing Criteria Score</label>
-          <input
-            v-model.number="passScore"
-            type="number"
-            min="0"
-            :max="questions.length"
-            class="w-full md:w-1/3 border border-slate-200 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-purple-500"
+          <input 
+            v-model.number="passScore" 
+            type="number" 
+            class="w-full md:w-1/3 border border-slate-200 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-purple-500" 
           />
-          <p class="text-[11px] text-slate-400 mt-1">Maximum passing score: {{ questions.length }}</p>
         </div>
 
         <hr />

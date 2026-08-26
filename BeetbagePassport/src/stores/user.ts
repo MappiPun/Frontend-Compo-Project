@@ -1,70 +1,177 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
-import type { User, LevelDetail, Question, ExamHistory } from '@/types'
-import { mockUsers, mockLevels, mockQuestions } from '@/mock/data'
+import { ref, computed } from 'vue'
+import { apiClient } from '@/services/api'
+
+export interface Benefit {
+  id: string
+  description: string
+}
+
+export interface Service {
+  id: string
+  name: string
+  description: string
+}
+
+export interface Level {
+  id: string
+  level: number
+  title: string
+  passScore: number
+  description?: string
+  benefits: Benefit[]
+  services: Service[]
+}
+
+export interface Question {
+  id: string
+  level: number
+  questionText: string
+  options: string[]
+  correctAnswer: number
+}
+
+export interface User {
+  id?: string
+  username: string
+  name: string
+  surname: string
+  email?: string
+  phonenumber?: string
+  phone?: string
+  province?: string
+  level?: number
+  currentLevel?: number
+  role?: string
+  isActive?: boolean
+  profileImage?: string
+  examHistory?: Array<{
+    id: string
+    level: number
+    attemptedAt: string
+    score: number
+    totalQuestions: number
+    passed: boolean
+  }>
+}
 
 export const useUserStore = defineStore('user', () => {
-  const users = ref<User[]>([...mockUsers])
-  const levels = ref<LevelDetail[]>([...mockLevels])
-  const questions = ref<Question[]>([...mockQuestions])
+  const users = ref<User[]>([])
+  const levels = ref<Level[]>([])
+  const questions = ref<Question[]>([])
+  const selectedUserId = ref<string | null>(null)
 
-  function getUserById(id: string) {
-    return users.value.find((u: User) => u.id === id)
-  }
+  const selectedUser = computed(() => {
+    if (!selectedUserId.value) return null
+    return users.value.find(
+      (u) => u.id === selectedUserId.value || u.username === selectedUserId.value
+    ) || null
+  })
 
-  function toggleUserStatus(userId: string) {
-    const target = users.value.find((u: User) => u.id === userId)
-    if (target) {
-      target.isActive = !target.isActive
+  async function fetchUsers() {
+    try {
+      const response = await apiClient.get('/users')
+      users.value = response.data
+    } catch (error) {
+      console.error('Failed to fetch users:', error)
     }
   }
 
-  function updateUserProfile(userId: string, updatedData: Partial<User>) {
-    const target = users.value.find((u: User) => u.id === userId)
-    if (target) {
-      Object.assign(target, updatedData)
+  async function fetchLevels() {
+    try {
+      const response = await apiClient.get('/levels')
+      levels.value = response.data
+    } catch (error) {
+      console.error('Failed to fetch levels:', error)
     }
   }
 
-  function recordExamResult(userId: string, score: number, total: number, passed: boolean) {
-    const target = users.value.find((u: User) => u.id === userId)
-    if (!target) return
-
-    const currentLvl = target.level ?? target.currentLevel ?? 1
-
-    const newHistory: ExamHistory = {
-      id: `h-${Date.now()}`,
-      level: currentLvl,
-      score,
-      totalQuestions: total,
-      passed,
-      attemptedAt: new Date().toISOString()
-    }
-
-    if (!target.examHistory) {
-      target.examHistory = []
-    }
-    target.examHistory.unshift(newHistory)
-
-    if (passed && currentLvl < 4) {
-      const nextLevel = currentLvl + 1
-      target.level = nextLevel
-      target.currentLevel = nextLevel
+  async function fetchQuestions() {
+    try {
+      const response = await apiClient.get('/questions')
+      questions.value = response.data
+    } catch (error) {
+      console.error('Failed to fetch questions:', error)
     }
   }
 
   function getLevelDetail(levelNumber: number) {
-    return levels.value.find((l: LevelDetail) => l.level === levelNumber)
+    return levels.value.find((l) => l.level === levelNumber) || null
+  }
+
+  function setSelectedUser(id: string) {
+    selectedUserId.value = id
+  }
+
+  async function toggleUserStatus(userId: string | number) {
+    const user = users.value.find((u) => u.id === userId || u.username === userId)
+    if (!user) return
+
+    const newStatus = !user.isActive
+    try {
+      const response = await apiClient.patch(`/users/${user.id}`, {
+        isActive: newStatus
+      })
+      user.isActive = response.data.isActive ?? newStatus
+    } catch (err) {
+      console.error('Failed to update user active status:', err)
+    }
+  }
+
+  async function recordExamResult(
+    username: string,
+    level: number,
+    score: number,
+    totalQuestions: number,
+    passed: boolean
+  ) {
+    if (users.value.length === 0) {
+      await fetchUsers()
+    }
+
+    const user = users.value.find((u) => u.username === username)
+    if (user) {
+      if (!user.examHistory) user.examHistory = []
+      
+      const newHistory = {
+        id: `h-${Date.now()}`,
+        level,
+        attemptedAt: new Date().toISOString(),
+        score,
+        totalQuestions,
+        passed
+      }
+
+      user.examHistory.push(newHistory)
+
+      if (passed && (user.level ?? 1) <= level) {
+        user.level = level + 1
+      }
+
+      // ส่ง API ไปอัปเดตข้อมูลที่ db.json
+      try {
+        await apiClient.patch(`/users/${user.id}`, {
+          examHistory: user.examHistory,
+          level: user.level
+        })
+      } catch (error) {
+        console.error('Failed to update user exam history on backend:', error)
+      }
+    }
   }
 
   return {
     users,
     levels,
     questions,
-    getUserById,
+    selectedUserId,
+    selectedUser,
+    fetchUsers,
+    fetchLevels,
+    fetchQuestions,
+    getLevelDetail,
+    setSelectedUser,
     toggleUserStatus,
-    updateUserProfile,
-    recordExamResult,
-    getLevelDetail
+    recordExamResult
   }
 })

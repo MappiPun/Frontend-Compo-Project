@@ -6,7 +6,7 @@ export const TOKEN_KEY = 'token'
 const PROD_BACKEND_URL = 'https://project2-backend-9587.onrender.com/api/v1'
 
 const apiClient = axios.create({
-  baseURL: `${import.meta.env.VITE_BACKEND_URL || PROD_BACKEND_URL}/api`,
+  baseURL: import.meta.env.VITE_BACKEND_URL || PROD_BACKEND_URL,
 })
 
 // the interceptor attaches the JWT token to every request

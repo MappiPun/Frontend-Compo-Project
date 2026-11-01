@@ -2,8 +2,11 @@ import axios from 'axios'
 
 export const TOKEN_KEY = 'token'
 
+// กำหนด URL ของ Render ไว้เป็นค่าสำรอง (Fallback) ป้องกันเคสตัวแปร env เป็น undefined บน Production
+const PROD_BACKEND_URL = 'https://project2-backend-9587.onrender.com/api/v1'
+
 const apiClient = axios.create({
-  baseURL: `${import.meta.env.VITE_BACKEND_URL}/api`,
+  baseURL: `${import.meta.env.VITE_BACKEND_URL || PROD_BACKEND_URL}/api`,
 })
 
 // the interceptor attaches the JWT token to every request

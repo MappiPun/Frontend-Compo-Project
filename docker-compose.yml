@@ -1,0 +1,6 @@
+services:
+  web:
+    image: ${DOCKER_HUB_USERNAME}/se331-frontend:latest
+    ports:
+      - "8001:80"
+    restart: unless-stopped
